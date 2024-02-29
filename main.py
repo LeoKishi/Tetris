@@ -13,7 +13,7 @@ class Grid:
             for y in range(10):
                 self.button[x][y] = tk.Frame(grid_frame,height=30, width=30, borderwidth=1, relief=tk.RIDGE)
                 self.button[x][y].grid(row=x, column=y)
-                
+        # 4x10 space to spawn pieces above screen
         for x in range(4):
             for y in range(10):
                 self.button[x][y].grid_forget()
@@ -29,21 +29,32 @@ class Control:
             grid.button[x][y]['bg'] = 'red'
 
     def step(self):
+        for i in np.nonzero(grid.array == 1)[0]:
+            # if piece is next to floor
+            if i == 23:
+                return
         coords =  np.transpose(np.nonzero(grid.array == 1)) # piece position
         # erase piece
-        for coord in coords:
-            x, y = coord[0], coord[1]
+        for pos in coords:
+            x, y = pos[0], pos[1]
             grid.array[x][y] = 0
             grid.button[x][y]['bg'] = 'SystemButtonFace'
         # redraw piece
-        for coord in coords:
-            x, y = coord[0], coord[1]
+        for pos in coords:
+            x, y = pos[0], pos[1]
             grid.array[x+1][y] = 1
             grid.button[x+1][y]['bg'] = 'red'
+        grid.print_array()
 
 
 class Piece:
-     square = [[0,4],[0,5],[1,4],[1,5]]
+     j_shape = [[0,5],[1,5],[2,5],[2,4]]
+     l_shape = [[0,4],[1,4],[2,4],[2,5]]
+     i_shape = [[0,3],[0,4],[0,5],[0,6]]
+     o_shape = [[0,4],[0,5],[1,4],[1,5]]
+     s_shape = [[0,5],[0,6],[1,5],[1,4]]
+     z_shape = [[0,4],[0,5],[1,5],[1,6]]
+     t_shape = [[0,4],[0,5],[0,6],[1,5]]
 
 
 
@@ -65,8 +76,8 @@ control = Control()
 
 
 # misc
+control.spawn_piece(Piece.t_shape)
 grid.print_array()
-control.spawn_piece(Piece.square)
 
 
 
