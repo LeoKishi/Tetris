@@ -1,5 +1,7 @@
 import tkinter as tk
 import numpy as np
+import piece_movement, tetrimino
+
 
 root = tk.Tk()
 root.resizable(0,0)
@@ -22,39 +24,38 @@ class Grid:
         print(self.array)
 
 class Control:
+    def __init__(self):
+        root.bind('<Key>', lambda event: self.move(event.keysym, None))
+
+    holding = None
+
     def spawn_piece(self, piece):
+        self.holding = piece
         for coord in piece:
             x, y = coord[0], coord[1]
             grid.array[x][y] = 1
             grid.button[x][y]['bg'] = 'red'
 
-    def step(self):
-        for i in np.nonzero(grid.array == 1)[0]:
-            # if piece is next to floor
-            if i == 23:
-                return
-        coords =  np.transpose(np.nonzero(grid.array == 1)) # piece position
-        # erase piece
-        for pos in coords:
-            x, y = pos[0], pos[1]
-            grid.array[x][y] = 0
-            grid.button[x][y]['bg'] = 'SystemButtonFace'
-        # redraw piece
-        for pos in coords:
-            x, y = pos[0], pos[1]
-            grid.array[x+1][y] = 1
-            grid.button[x+1][y]['bg'] = 'red'
-        grid.print_array()
+    def move(self, key, current_piece):
+        match key:
+            case 'Down':
+                piece_movement.down(grid) # moves piece 1 step downwards
+            case 'Up':
+                piece_movement.rotate(grid, current_piece)
+            case 'Right':
+                piece_movement.lateral(grid, mod_y=1) # moves piece 1 step to the right
+            case 'Left':
+                piece_movement.lateral(grid, mod_y=-1) # moves piece 1 step to the left
 
+class Piece:  
+    t_shape = [[0,5],[0,4],[0,6],[1,5]]
+    j_shape = [[0,5],[1,5],[2,5],[2,4]]
+    l_shape = [[0,4],[1,4],[2,4],[2,5]]
+    i_shape = [[0,3],[0,4],[0,5],[0,6]]
+    o_shape = [[0,4],[0,5],[1,4],[1,5]]
+    s_shape = [[0,5],[0,6],[1,5],[1,4]]
+    z_shape = [[0,4],[0,5],[1,5],[1,6]]
 
-class Piece:
-     j_shape = [[0,5],[1,5],[2,5],[2,4]]
-     l_shape = [[0,4],[1,4],[2,4],[2,5]]
-     i_shape = [[0,3],[0,4],[0,5],[0,6]]
-     o_shape = [[0,4],[0,5],[1,4],[1,5]]
-     s_shape = [[0,5],[0,6],[1,5],[1,4]]
-     z_shape = [[0,4],[0,5],[1,5],[1,6]]
-     t_shape = [[0,4],[0,5],[0,6],[1,5]]
 
 
 
@@ -80,9 +81,6 @@ control.spawn_piece(Piece.t_shape)
 grid.print_array()
 
 
-
-# event binding
-root.bind('<Button-1>', lambda event:control.step())
 
 
 
