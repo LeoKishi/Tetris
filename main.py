@@ -42,11 +42,11 @@ class Control:
             case 'Up':
                 piece_movement.rotate(grid, current_piece)
             case 'Down':
-                piece_movement.down(grid, mod_x=1) # moves piece 1 step downwards
+                piece_movement.step(grid,'Down' , mod_x=1) # moves piece 1 step downwards
             case 'Right':
-                piece_movement.lateral(grid, mod_y=1) # moves piece 1 step to the right
+                piece_movement.step(grid,'Lateral', mod_y=1) # moves piece 1 step to the right
             case 'Left':
-                piece_movement.lateral(grid, mod_y=-1) # moves piece 1 step to the left
+                piece_movement.step(grid,'Lateral', mod_y=-1) # moves piece 1 step to the left
         grid.print_array()
 
 
