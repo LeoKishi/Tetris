@@ -1,6 +1,6 @@
 import tkinter as tk
 import numpy as np
-import piece_movement, tetrimino
+import piece_movement
 
 
 root = tk.Tk()
@@ -13,7 +13,7 @@ class Grid:
         self.array = np.zeros((24,10),dtype=np.int8)
         for x in range(24):
             for y in range(10):
-                self.button[x][y] = tk.Frame(grid_frame,height=30, width=30, borderwidth=1, relief=tk.RIDGE)
+                self.button[x][y] = tk.Frame(grid_frame,height=30, width=30, borderwidth=1,bg='#1a1a1a' ,relief=tk.FLAT)
                 self.button[x][y].grid(row=x, column=y)
         # 4x10 space to spawn pieces above screen
         for x in range(4):
@@ -23,11 +23,12 @@ class Grid:
     def print_array(self):
         print(self.array)
 
+
+
 class Control:
     def __init__(self):
-        root.bind('<Key>', lambda event: self.move(event.keysym, None))
-
-    holding = None
+        self.holding = None
+        root.bind('<Key>', lambda event: self.move(event.keysym, self.holding))
 
     def spawn_piece(self, piece):
         self.holding = piece
@@ -38,14 +39,17 @@ class Control:
 
     def move(self, key, current_piece):
         match key:
-            case 'Down':
-                piece_movement.down(grid) # moves piece 1 step downwards
             case 'Up':
                 piece_movement.rotate(grid, current_piece)
+            case 'Down':
+                piece_movement.step(grid,'Down' , mod_x=1) # moves piece 1 step downwards
             case 'Right':
-                piece_movement.lateral(grid, mod_y=1) # moves piece 1 step to the right
+                piece_movement.step(grid,'Lateral', mod_y=1) # moves piece 1 step to the right
             case 'Left':
-                piece_movement.lateral(grid, mod_y=-1) # moves piece 1 step to the left
+                piece_movement.step(grid,'Lateral', mod_y=-1) # moves piece 1 step to the left
+        grid.print_array()
+
+
 
 class Piece:  
     t_shape = [[0,5],[0,4],[0,6],[1,5]]
@@ -61,9 +65,9 @@ class Piece:
 
 
 # frame creation
-main_window = tk.Frame(root, height=600, width=400, bg='pink')
+main_window = tk.Frame(root, height=600, width=400, bg='#2d2a30')
 grid_frame = tk.Frame(main_window, borderwidth=3, relief=tk.SUNKEN)
-side_frame = tk.Frame(main_window, height=600, width=200)
+side_frame = tk.Frame(main_window, height=600, width=200, bg='#1a1a1a')
 
 # frame packing
 main_window.pack()
