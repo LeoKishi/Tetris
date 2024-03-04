@@ -1,6 +1,6 @@
 import tkinter as tk
 import numpy as np
-import piece_movement as pmov
+import pmov
 
 
 root = tk.Tk()
@@ -27,28 +27,19 @@ class Grid:
 
 class Control:
     def __init__(self):
-        self.current_piece = None
-        root.bind('<Key>', lambda event: self.move(event.keysym, self.current_piece))
+        root.bind('<Key>', lambda event: self.move(event.keysym))
 
-    s_shape = [[0,1,1],
-               [1,1,0],
-               [0,0,0]]
-
-    def spawn_piece(self, piece):
-        self.current_piece = piece
-        pmov.move.replace(grid, [5,4], piece[0])
-
-    def move(self, key, holding):
+    def move(self, key):
         match key:
             case 'Up':
-                pmov.move.rotate(grid, holding)
+                move.rotate()
             case 'Down':
-                pmov.move.step(grid,'Down' , mod_x=1) # moves piece 1 step downwards
+                move.step('Down' , mod_x=1) # moves piece 1 step downwards
             case 'Right':
-                pmov.move.step(grid,'Lateral', mod_y=1) # moves piece 1 step to the right
+                move.step('Lateral', mod_y=1) # moves piece 1 step to the right
             case 'Left':
-                pmov.move.step(grid,'Lateral', mod_y=-1) # moves piece 1 step to the left
-        grid.print_array()
+                move.step('Lateral', mod_y=-1) # moves piece 1 step to the left
+        #grid.print_array()
 
 
 
@@ -66,10 +57,10 @@ side_frame.pack(side=tk.RIGHT, padx=(0,20))
 grid = Grid()
 control = Control()
 
-
+move = pmov.Move(grid)
 
 # misc
-control.spawn_piece(pmov.piece.t_rotation)
+move.spawn_next()
 
 
 
