@@ -19,11 +19,10 @@ class Grid:
         for x in range(4):
             for y in range(10):
                 self.button[x][y].grid_forget()
-        
+
     def print_array(self):
-        print(self.array)
-
-
+        for i in self.array:
+            print(i)
 
 class Control:
     def __init__(self):
@@ -36,9 +35,9 @@ class Control:
             case 'Down':
                 move.step('Down' , mod_x=1) # moves piece 1 step downwards
             case 'Right':
-                move.step('Lateral', mod_y=1) # moves piece 1 step to the right
+                move.step('Right', mod_y=1) # moves piece 1 step to the right
             case 'Left':
-                move.step('Lateral', mod_y=-1) # moves piece 1 step to the left
+                move.step('Left', mod_y=-1) # moves piece 1 step to the left
         #grid.print_array()
 
 
@@ -56,8 +55,7 @@ side_frame.pack(side=tk.RIGHT, padx=(0,20))
 # class instantiation
 grid = Grid()
 control = Control()
-
-move = pmov.Move(grid)
+move = pmov.Move(grid, root)
 
 # misc
 move.spawn_next()
