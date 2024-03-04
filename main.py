@@ -1,6 +1,6 @@
 import tkinter as tk
 import numpy as np
-import piece_movement
+import piece_movement as pmov
 
 
 root = tk.Tk()
@@ -13,7 +13,7 @@ class Grid:
         self.array = np.zeros((24,10),dtype=np.int8)
         for x in range(24):
             for y in range(10):
-                self.button[x][y] = tk.Frame(grid_frame,height=30, width=30, borderwidth=1,bg='#1a1a1a' ,relief=tk.FLAT)
+                self.button[x][y] = tk.Frame(grid_frame,height=30, width=30, borderwidth=1,bg='#1a1a1a' ,relief=tk.RIDGE)
                 self.button[x][y].grid(row=x, column=y)
         # 4x10 space to spawn pieces above screen
         for x in range(4):
@@ -27,40 +27,28 @@ class Grid:
 
 class Control:
     def __init__(self):
-        self.holding = None
-        root.bind('<Key>', lambda event: self.move(event.keysym, self.holding))
+        self.current_piece = None
+        root.bind('<Key>', lambda event: self.move(event.keysym, self.current_piece))
+
+    s_shape = [[0,1,1],
+               [1,1,0],
+               [0,0,0]]
 
     def spawn_piece(self, piece):
-        self.holding = piece
-        for coord in piece:
-            x, y = coord[0], coord[1]
-            grid.array[x][y] = 1
-            grid.button[x][y]['bg'] = 'red'
+        self.current_piece = piece
+        pmov.move.replace(grid, [5,4], piece[0])
 
-    def move(self, key, current_piece):
+    def move(self, key, holding):
         match key:
             case 'Up':
-                piece_movement.rotate(grid, current_piece)
+                pmov.move.rotate(grid, holding)
             case 'Down':
-                piece_movement.step(grid,'Down' , mod_x=1) # moves piece 1 step downwards
+                pmov.move.step(grid,'Down' , mod_x=1) # moves piece 1 step downwards
             case 'Right':
-                piece_movement.step(grid,'Lateral', mod_y=1) # moves piece 1 step to the right
+                pmov.move.step(grid,'Lateral', mod_y=1) # moves piece 1 step to the right
             case 'Left':
-                piece_movement.step(grid,'Lateral', mod_y=-1) # moves piece 1 step to the left
+                pmov.move.step(grid,'Lateral', mod_y=-1) # moves piece 1 step to the left
         grid.print_array()
-
-
-
-class Piece:  
-    t_shape = [[0,5],[0,4],[0,6],[1,5]]
-    j_shape = [[0,5],[1,5],[2,5],[2,4]]
-    l_shape = [[0,4],[1,4],[2,4],[2,5]]
-    i_shape = [[0,3],[0,4],[0,5],[0,6]]
-    o_shape = [[0,4],[0,5],[1,4],[1,5]]
-    s_shape = [[0,5],[0,6],[1,5],[1,4]]
-    z_shape = [[0,4],[0,5],[1,5],[1,6]]
-
-
 
 
 
@@ -81,9 +69,7 @@ control = Control()
 
 
 # misc
-control.spawn_piece(Piece.t_shape)
-grid.print_array()
-
+control.spawn_piece(pmov.piece.t_rotation)
 
 
 
