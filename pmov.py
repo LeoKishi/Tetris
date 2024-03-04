@@ -1,5 +1,7 @@
 import numpy as np
 import tkinter as tk
+import random
+from copy import deepcopy
 
 class Move:
     def __init__(self, grid, root):
@@ -47,7 +49,7 @@ class Move:
 
     # select piece orientation and place in grid
     def rotate(self):
-        coords =  np.transpose(np.nonzero(self.grid.array == 1)) # falling piece position
+        coords = np.transpose(np.nonzero(self.grid.array == 1)) # falling piece position
         self.erase(coords)
         piece.holding = piece.hold_rotation[self.orientation] # select piece orientation
         if self.orientation == 3:
@@ -62,12 +64,14 @@ class Move:
         piece.holding = shape
         x, y = pos[0], pos[1]
         coords = []
-        for row in range(3):
-            for col in range(3):
-                if shape[row][col] == self.grid.array[x+row][y+col] == 2:
-                    return
-                else:
-                    coords.append((x+row, y+col)) if shape[row][col] == 1 else None
+        for row in range(4):
+            for col in range(4):
+                try:
+                    if shape[row][col] == self.grid.array[x+row][y+col] == 2:
+                        return
+                    else:
+                        coords.append((x+row, y+col)) if shape[row][col] == 1 else None
+                except: None
         self.draw(coords)
 
     bottom_collision = False
@@ -75,20 +79,23 @@ class Move:
     def check_bottom_collision(self):
         collision = False
         x, y = piece.current_pos[0]+1, piece.current_pos[1]
-        for row in range(3):
-            for col in range(3):
+        for row in range(4):
+            for col in range(4):
                 # checks for collision with another piece
                 try:
                     if (piece.holding[row][col] == 1) and (self.grid.array[x+row][y+col] == 2):
+                        print('Bottom collision')
                         collision = True
                         self.bottom_collision = True
                         self.lock_delay()
                 # collision with floor (index out of bounds)
                 except:
+                    print('Bottom collision')
                     collision = True
                     self.bottom_collision = True
                     self.lock_delay()
         if collision == False:
+            print('Stop lock')
             self.bottom_collision = False
             self.stop_lock_delay()
 
@@ -102,12 +109,11 @@ class Move:
             y += 1
         else:
             y-= 1
-        for row in range(3):
-            for col in range(3):
+        for row in range(4):
+            for col in range(4):
                 # checks for collision with another piece
                 try:
                     if (piece.holding[row][col] == 1) and (self.grid.array[x+row][y+col] == 2):
-                        print('Side collision')
                         collision = True
                         if side == 'right':
                             self.right_collision = True
@@ -121,71 +127,221 @@ class Move:
                 self.left_collision = False
 
     def freeze(self):
+        print('Freeze')
         coords =  np.transpose(np.nonzero(self.grid.array == 1))
         for pos in coords:
             x, y = pos[0], pos[1]
             self.grid.array[x][y] = 2
+        self.bottom_collision = self.left_collision = self.right_collision_collision = False
+        self.stop_list = []
         self.spawn_next()
         
     def spawn_next(self):
-        pos = [0,4]
-        self.replace(pos, TShape.t_shape_0)
+        random_shape = piece.get_random_shape()
+        pos = [5,4]
         self.orientation = 1
         piece.current_pos = pos
-        piece.hold_rotation = TShape.t_rotation
+        piece.hold_rotation = random_shape.rotation
         piece.holding = piece.hold_rotation[0]
+        self.replace(pos, random_shape.shape_0)
 
     stop_list = []
 
     def lock_delay(self):
-        self.stop_list.append(self.root.after(1000, self.freeze))
+        if len(self.stop_list) == 0:
+            print('Lock start')
+            self.stop_list.append(self.root.after(1000, self.freeze))
 
     def stop_lock_delay(self):
         if len(self.stop_list) > 0:
             for item in self.stop_list:
                 self.root.after_cancel(item)
+                
+
 
 class Piece:
+    def __init__(self, *args):
+        self.shape_pool = [*args]
+        self.temp_shape_pool = deepcopy(self.shape_pool)
+
     current_pos = []
     holding = None
     hold_rotation = None
 
+    def get_random_shape(self):
+        if len(self.temp_shape_pool) == 0:
+            self.temp_shape_pool = deepcopy(self.shape_pool)
+        random_shape = random.choice(self.temp_shape_pool)
+        self.temp_shape_pool.remove(random_shape)
+        return random_shape
+
 class SShape:
-    s_shape_0 = [[0,1,1],
-               [1,1,0],
-               [0,0,0]]
+    shape_0 = [[0,1,1,0],
+                 [1,1,0,0],
+                 [0,0,0,0],
+                 [0,0,0,0]]
 
-    s_shape_90 = [[0,1,0],
-                  [0,1,1],
-                  [0,0,1]]
+    shape_90 = [[0,1,0,0],
+                  [0,1,1,0],
+                  [0,0,1,0],
+                  [0,0,0,0]]
 
-    s_shape_180 = [[0,0,0],
-                   [0,1,1],
-                   [1,1,0]]
+    shape_180 = [[0,0,0,0],
+                   [0,1,1,0],
+                   [1,1,0,0],
+                   [0,0,0,0]]
     
-    s_shape_270 = [[0,1,0],
-                   [0,1,1],
-                   [0,0,1]]
+    shape_270 = [[0,1,0,0],
+                   [0,1,1,0],
+                   [0,0,1,0],
+                   [0,0,0,0]]
 
-    s_rotation = [s_shape_0, s_shape_90, s_shape_180, s_shape_270]
+    rotation = [shape_0, shape_90, shape_180, shape_270]
+
+class ZShape:
+    shape_0 = [[1,1,0,0],
+                 [0,1,1,0],
+                 [0,0,0,0],
+                 [0,0,0,0]]
+
+    shape_90 = [[0,0,1,0],
+                  [0,1,1,0],
+                  [0,1,0,0],
+                  [0,0,0,0]]
+
+    shape_180 = [[0,0,0,0],
+                   [1,1,0,0],
+                   [0,1,1,0],
+                   [0,0,0,0]]
+    
+    shape_270 = [[0,1,0,0],
+                   [1,1,0,0],
+                   [1,0,0,0],
+                   [0,0,0,0]]
+
+    rotation = [shape_0, shape_90, shape_180, shape_270]
+
+class LShape:
+    shape_0 = [[0,0,1,0],
+                 [1,1,1,0],
+                 [0,0,0,0],
+                 [0,0,0,0]]
+
+    shape_90 = [[0,1,0,0],
+                  [0,1,0,0],
+                  [0,1,1,0],
+                  [0,0,0,0]]
+
+    shape_180 = [[0,0,0,0],
+                   [1,1,1,0],
+                   [1,0,0,0],
+                   [0,0,0,0]]
+    
+    shape_270 = [[1,1,0,0],
+                   [0,1,0,0],
+                   [0,1,0,0],
+                   [0,0,0,0]]
+
+    rotation = [shape_0, shape_90, shape_180, shape_270]
+
+class JShape:
+    shape_0 = [[1,0,0,0],
+                 [1,1,1,0],
+                 [0,0,0,0],
+                 [0,0,0,0]]
+
+    shape_90 = [[0,1,1,0],
+                  [0,1,0,0],
+                  [0,1,0,0],
+                  [0,0,0,0]]
+
+    shape_180 = [[0,0,0,0],
+                   [1,1,1,0],
+                   [0,0,1,0],
+                   [0,0,0,0]]
+    
+    shape_270 = [[0,1,0,0],
+                   [0,1,0,0],
+                   [1,1,0,0],
+                   [0,0,0,0]]
+
+    rotation = [shape_0, shape_90, shape_180, shape_270]
 
 class TShape:
-    t_shape_0 = [[0,0,0],
-               [1,1,1],
-               [0,1,0]]
+    shape_0 = [[0,0,0,0],
+                 [1,1,1,0],
+                 [0,1,0,0],
+                 [0,0,0,0]]
 
-    t_shape_90 = [[0,1,0],
-                  [1,1,0],
-                  [0,1,0]]
+    shape_90 = [[0,1,0,0],
+                  [1,1,0,0],
+                  [0,1,0,0],
+                  [0,0,0,0]]
 
-    t_shape_180 = [[0,1,0],
-                   [1,1,1],
-                   [0,0,0]]
+    shape_180 = [[0,1,0,0],
+                   [1,1,1,0],
+                   [0,0,0,0],
+                   [0,0,0,0]]
     
-    t_shape_270 = [[0,1,0],
-                   [0,1,1],
-                   [0,1,0]]
+    shape_270 = [[0,1,0,0],
+                   [0,1,1,0],
+                   [0,1,0,0],
+                   [0,0,0,0]]
     
-    t_rotation = [t_shape_0, t_shape_90, t_shape_180, t_shape_270]
+    rotation = [shape_0, shape_90, shape_180, shape_270]
 
-piece = Piece()
+class IShape:
+    shape_0 = [[0,0,0,0],
+                 [1,1,1,1],
+                 [0,0,0,0],
+                 [0,0,0,0]]
+
+    shape_90 = [[0,0,1,0],
+                  [0,0,1,0],
+                  [0,0,1,0],
+                  [0,0,1,0]]
+
+    shape_180 = [[0,0,0,0],
+                   [0,0,0,0],
+                   [1,1,1,1],
+                   [0,0,0,0]]
+    
+    shape_270 = [[0,1,0,0],
+                   [0,1,0,0],
+                   [0,1,0,0],
+                   [0,1,0,0]]
+    
+    rotation = [shape_0, shape_90, shape_180, shape_270]
+
+class OShape:
+    shape_0 = [[1,1,0,0],
+                 [1,1,0,0],
+                 [0,0,0,0],
+                 [0,0,0,0]]
+
+    shape_90 = [[1,1,0,0],
+                  [1,1,0,0],
+                  [0,0,0,0],
+                  [0,0,0,0]]
+
+    shape_180 = [[1,1,0,0],
+                   [1,1,0,0],
+                   [0,0,0,0],
+                   [0,0,0,0]]
+    
+    shape_270 = [[1,1,0,0],
+                   [1,1,0,0],
+                   [0,0,0,0],
+                   [0,0,0,0]]
+    
+    rotation = [shape_0, shape_90, shape_180, shape_270]
+
+sshape = SShape()
+zshape = ZShape()
+lshape = LShape()
+jshape = JShape()
+tshape = TShape()
+oshape = OShape()
+ishape = IShape()
+
+piece = Piece(sshape, zshape, lshape, jshape, tshape, oshape, ishape)
