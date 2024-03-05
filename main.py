@@ -39,7 +39,7 @@ class Control:
                 move.step('Right', mod_y=1) # moves piece 1 step to the right
             case 'Left':
                 move.step('Left', mod_y=-1) # moves piece 1 step to the left
-        grid.print_array()
+        #grid.print_array()
 
 
 
