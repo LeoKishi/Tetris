@@ -56,42 +56,36 @@ class Move:
             self.orientation = 0
         else:
             self.orientation += 1
-        status = self.check_bounds()
-        if status == True:
+        if self.rotation_is_valid() == True:
             self.replace(piece.current_pos, piece.holding)
             return
-        if status == 'right':
-            self.try_fit('right')
-        elif status == 'left':
-            self.try_fit('left')
+        else: self.try_insert(self.out_of_bounds())
 
-    def try_fit(self, direction):
-        print('Try fit')
+
+    def try_insert(self, direction):
+        print('Try insert')
         x, y = piece.current_pos[0],piece.current_pos[1]
         if direction == 'left':
-            if (piece.holding == ishape.shape_180) and piece.current_pos[1] == -2:
+            if piece.current_pos[1] == -2:
                 self.replace([x,y+2], piece.holding)
-                return
-            if piece.current_pos[1] == -1:
+            elif piece.current_pos[1] == -1:
                 self.replace([x,y+1], piece.holding)
         elif direction == 'right':
-            if (piece.holding == ishape.shape_0) and piece.current_pos[1] == 8:
-                self.replace([x,y-2], piece.holding)
-                return
-            if piece.current_pos[1] == 7:
+            if (piece.current_pos[1] == 8):
+                reach = 2 if piece.holding == ishape.shape_0 else 1
+                self.replace([x,y-reach], piece.holding)
+            elif piece.current_pos[1] == 7:
                 self.replace([x,y-1], piece.holding) 
 
     # place piece in grid
     def rotation_is_valid(self) -> bool | str:
         if self.blocked():
-            return False
-        side = self.inside_bounds()
+            return 
+        side = self.out_of_bounds()
         if side == None:
             return True
-        else:
-            return side
 
-    def inside_bounds(self):
+    def out_of_bounds(self):
         x, y = piece.current_pos[0], piece.current_pos[1]
         for row in range(4):
             for col in range(4):
@@ -99,20 +93,21 @@ class Move:
                     if piece.holding[row][col] == 1:
                         self.grid.array[x+row][y+col]
                 except IndexError:
-                    print('Out of bounds: right-side')
                     return 'right'
                 else:
                     if (piece.holding[row][col] == 1) and (y+col == -1):
-                        print('Out of bounds: left-side')
                         return 'left'
+        return None
                     
     def blocked(self) -> bool :
         x, y = piece.current_pos[0], piece.current_pos[1]
         for row in range(4):
             for col in range(4):
-                if (piece.holding[row][col] == 1) and (self.grid.array[x+row][y+col] == 2):
-                    print('Blocked by piece')
-                    return True
+                try:
+                    if (piece.holding[row][col] == 1) and (self.grid.array[x+row][y+col] == 2):
+                        print('Blocked by piece')
+                        return True
+                except: pass
 
     def replace(self, pos, shape):
         piece.current_pos = pos
@@ -236,42 +231,42 @@ class SShape:
                [0,0,0,0]]
 
     shape_90 = [[0,1,0,0],
-                  [0,1,1,0],
-                  [0,0,1,0],
-                  [0,0,0,0]]
+                [0,1,1,0],
+                [0,0,1,0],
+                [0,0,0,0]]
 
     shape_180 = [[0,0,0,0],
-                   [0,1,1,0],
-                   [1,1,0,0],
-                   [0,0,0,0]]
+                 [0,1,1,0],
+                 [1,1,0,0],
+                 [0,0,0,0]]
     
-    shape_270 = [[0,1,0,0],
-                   [0,1,1,0],
-                   [0,0,1,0],
-                   [0,0,0,0]]
+    shape_270 = [[1,0,0,0],
+                 [1,1,0,0],
+                 [0,1,0,0],
+                 [0,0,0,0]]
 
     rotation = [shape_0, shape_90, shape_180, shape_270]
 
 class ZShape:
     shape_0 = [[1,1,0,0],
-                 [0,1,1,0],
-                 [0,0,0,0],
-                 [0,0,0,0]]
+               [0,1,1,0],
+               [0,0,0,0],
+               [0,0,0,0]]
 
     shape_90 = [[0,0,1,0],
-                  [0,1,1,0],
-                  [0,1,0,0],
-                  [0,0,0,0]]
+                [0,1,1,0],
+                [0,1,0,0],
+                [0,0,0,0]]
 
     shape_180 = [[0,0,0,0],
-                   [1,1,0,0],
-                   [0,1,1,0],
-                   [0,0,0,0]]
+                 [1,1,0,0],
+                 [0,1,1,0],
+                 [0,0,0,0]]
     
     shape_270 = [[0,1,0,0],
-                   [1,1,0,0],
-                   [1,0,0,0],
-                   [0,0,0,0]]
+                 [1,1,0,0],
+                 [1,0,0,0],
+                 [0,0,0,0]]
 
     rotation = [shape_0, shape_90, shape_180, shape_270]
 
