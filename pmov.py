@@ -51,12 +51,12 @@ class Move:
     def rotate(self):
         coords = np.transpose(np.nonzero(self.grid.array == 1)) # falling piece position
         self.erase(coords)
-        piece.holding = piece.hold_rotation[self.orientation] # select piece orientation
+        piece.holding = piece.hold_rotation[self.orientation] # select piece orientation 
         if self.orientation == 3:
             self.orientation = 0
         else:
             self.orientation += 1
-        self.replace(piece.current_pos, piece.holding) # place piece in grid
+        self.replace(piece.current_pos, piece.holding)
 
     # place piece in grid
     def replace(self, pos, shape):
@@ -67,8 +67,12 @@ class Move:
         for row in range(4):
             for col in range(4):
                 try:
-                    if shape[row][col] == self.grid.array[x+row][y+col] == 2:
-                        return
+                    if (y+col > 10 - (1 if piece.holding == ishape.shape_0 else 0)) or (y+col < 0):
+                        print('OUT OF BOUNDS')
+                        return False
+                    if (shape[row][col] == 1) and (self.grid.array[x+row][y+col] == 2):
+                        print('BLOCKED BY PIECE')
+                        return False
                     else:
                         coords.append((x+row, y+col)) if shape[row][col] == 1 else None
                 except: None
@@ -84,18 +88,15 @@ class Move:
                 # checks for collision with another piece
                 try:
                     if (piece.holding[row][col] == 1) and (self.grid.array[x+row][y+col] == 2):
-                        print('Bottom collision')
                         collision = True
                         self.bottom_collision = True
                         self.lock_delay()
                 # collision with floor (index out of bounds)
                 except:
-                    print('Bottom collision')
                     collision = True
                     self.bottom_collision = True
                     self.lock_delay()
         if collision == False:
-            print('Stop lock')
             self.bottom_collision = False
             self.stop_lock_delay()
 
@@ -127,7 +128,6 @@ class Move:
                 self.left_collision = False
 
     def freeze(self):
-        print('Freeze')
         coords =  np.transpose(np.nonzero(self.grid.array == 1))
         for pos in coords:
             x, y = pos[0], pos[1]
@@ -149,7 +149,6 @@ class Move:
 
     def lock_delay(self):
         if len(self.stop_list) == 0:
-            print('Lock start')
             self.stop_list.append(self.root.after(1000, self.freeze))
 
     def stop_lock_delay(self):
@@ -177,9 +176,9 @@ class Piece:
 
 class SShape:
     shape_0 = [[0,1,1,0],
-                 [1,1,0,0],
-                 [0,0,0,0],
-                 [0,0,0,0]]
+               [1,1,0,0],
+               [0,0,0,0],
+               [0,0,0,0]]
 
     shape_90 = [[0,1,0,0],
                   [0,1,1,0],
