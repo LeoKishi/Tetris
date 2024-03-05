@@ -56,9 +56,29 @@ class Move:
             self.orientation = 0
         else:
             self.orientation += 1
-        self.replace(piece.current_pos, piece.holding)
+        status = self.check_bounds()
+        if status == True:
+            self.replace(piece.current_pos, piece.holding)
+            return
+        if status == 'right':
+            self.try_fit('right')
+        elif status == 'left':
+            self.try_fit('left')
 
-    # place piece in grid
+    def try_fit(self, direction):
+        x, y = piece.current_pos[0],piece.current_pos[1]
+        if direction == 'left':
+            if piece.holding == ishape.shape_180:
+                self.replace([x,y+2], piece.holding)
+                return
+            self.replace([x,y+1], piece.holding)
+        elif direction == 'right':
+            if piece.holding == ishape.shape_0:
+                self.replace([x,y-2], piece.holding)
+                return
+            self.replace([x,y-1], piece.holding) 
+
+
     def replace(self, pos, shape):
         piece.current_pos = pos
         piece.holding = shape
@@ -66,19 +86,35 @@ class Move:
         coords = []
         for row in range(4):
             for col in range(4):
-                try:
-                    if (y+col > 10 - (1 if piece.holding == ishape.shape_0 else 0)) or (y+col < 0):
-                        print('OUT OF BOUNDS')
-                        return False
-                    if (shape[row][col] == 1) and (self.grid.array[x+row][y+col] == 2):
-                        print('BLOCKED BY PIECE')
-                        return False
-                    else:
-                        coords.append((x+row, y+col)) if shape[row][col] == 1 else None
-                except: None
+                if y+col >= 0:
+                    try:
+                        if shape[row][col] == self.grid.array[x+row][y+col] == 2:
+                            return
+                        else:
+                            coords.append((x+row, y+col)) if shape[row][col] == 1 else None
+                    except: None
         self.draw(coords)
 
+    # place piece in grid
+    def check_bounds(self):
+        x, y = piece.current_pos[0], piece.current_pos[1]
+        reach = (5 if piece.holding != ishape.shape_270 else 6)
+        for row in range(4):
+            for col in range(4):
+                try:
+                    if (y+reach > 11) and not (piece.hold_rotation == oshape.rotation):
+                        return 'right'
+                    if (y+col < 0):
+                        return 'left'
+                    if (piece.holding[row][col] == 1) and (self.grid.array[x+row][y+col] == 2):
+                        print('BLOCKED BY PIECE')
+                        return False
+                except: None
+        return True
+
     bottom_collision = False
+
+    # arrumar bug do quadrado -> quadrado encostando a parte de baixo + rotação + mexer pro lado = não muda pra peça estática
 
     def check_bottom_collision(self):
         collision = False
