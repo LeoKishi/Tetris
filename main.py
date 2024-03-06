@@ -2,7 +2,6 @@ import tkinter as tk
 import numpy as np
 import pmov
 
-
 root = tk.Tk()
 root.resizable(0,0)
 root.title('TETRIS')
@@ -19,17 +18,15 @@ class Grid:
         for x in range(4):
             for y in range(10):
                 self.button[x][y].grid_forget()
-
+    
     def print_array(self):
         print()
         for i in self.array:
             print(i)
 
 class Control:
-    def __init__(self):
-        root.bind('<Key>', lambda event: self.move(event.keysym))
-
-    def move(self, key):
+    @classmethod
+    def move(cls, key):
         match key:
             case 'Up':
                 move.rotate()
@@ -39,7 +36,7 @@ class Control:
                 move.step('Right', mod_y=1) # moves piece 1 step to the right
             case 'Left':
                 move.step('Left', mod_y=-1) # moves piece 1 step to the left
-        #grid.print_array()
+        grid.print_array()
 
 
 
@@ -55,16 +52,12 @@ side_frame.pack(side=tk.RIGHT, padx=(0,20))
 
 # class instantiation
 grid = Grid()
-control = Control()
 move = pmov.Move(grid, root)
 
 # misc
+move.spawn_piece([20, 4], pmov.ishape.shape_90)
 move.spawn_next()
 
 
-
-
-
-
-
+root.bind('<Key>', lambda event: Control.move(event.keysym))
 root.mainloop()

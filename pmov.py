@@ -12,19 +12,19 @@ class Move:
         for pos in coords:
             x, y = pos[0], pos[1]
             self.grid.array[x][y] = 0
-            self.grid.button[x][y]['bg'] = '#1a1a1a'
-            self.grid.button[x][y]['relief'] = tk.RIDGE
-            self.grid.button[x][y]['borderwidth'] = 1
+            self.grid.button[x][y].config(bg='#1a1a1a',
+                                          relief=tk.RIDGE, 
+                                          borderwidth=1)
 
     def draw(self, coords, mod_x=0, mod_y=0):
         for pos in coords:
             x, y = pos[0], pos[1]
             self.grid.array[x+(mod_x)][y+(mod_y)] = 1
-            self.grid.button[x+(mod_x)][y+(mod_y)]['bg'] = 'red'
-            self.grid.button[x+(mod_x)][y+(mod_y)]['relief'] = tk.RAISED
-            self.grid.button[x+(mod_x)][y+(mod_y)]['borderwidth'] = 6
-        piece.current_pos[0] += mod_x
-        piece.current_pos[1] += mod_y
+            self.grid.button[x+(mod_x)][y+(mod_y)].config(bg='red',
+                                                          relief=tk.RAISED, borderwidth=6)
+        if mod_x or mod_y:
+            piece.current_pos[0] += mod_x
+            piece.current_pos[1] += mod_y
 
     def step(self, direction ,mod_x=0, mod_y=0):
         coords =  np.transpose(np.nonzero(self.grid.array == 1)) # falling piece position
@@ -40,7 +40,6 @@ class Move:
                     return
             self.erase(coords)
             self.draw(coords, mod_y=mod_y)
-
         self.check_side_collision('right')
         self.check_side_collision('left')
         self.check_bottom_collision()
@@ -58,12 +57,12 @@ class Move:
             self.orientation += 1
         if self.rotation_is_valid() == True:
             self.replace(piece.current_pos, piece.holding)
+            self.stop_lock_delay()
             return
-        else: self.try_insert(self.out_of_bounds())
+        else:
+            self.keep_inside(self.out_of_bounds())
 
-
-    def try_insert(self, direction):
-        print('Try insert')
+    def keep_inside(self, direction):
         x, y = piece.current_pos[0],piece.current_pos[1]
         if direction == 'left':
             if piece.current_pos[1] == -2:
@@ -76,14 +75,6 @@ class Move:
                 self.replace([x,y-reach], piece.holding)
             elif piece.current_pos[1] == 7:
                 self.replace([x,y-1], piece.holding) 
-
-    # place piece in grid
-    def rotation_is_valid(self) -> bool | str:
-        if self.blocked():
-            return 
-        side = self.out_of_bounds()
-        if side == None:
-            return True
 
     def out_of_bounds(self):
         x, y = piece.current_pos[0], piece.current_pos[1]
@@ -98,20 +89,55 @@ class Move:
                     if (piece.holding[row][col] == 1) and (y+col == -1):
                         return 'left'
         return None
-                    
-    def blocked(self) -> bool :
+
+    def kick_piece(self, direction):
+        x, y = piece.current_pos[0], piece.current_pos[1]
+        if direction:
+            print('Kick right')
+            self.replace([x,y+1], piece.holding)
+        else:
+            print('Kick left')
+            self.replace([x,y-1], piece.holding)
+
+    # place piece in grid
+    def rotation_is_valid(self):
+        if type(col := self.blocked()) is int:
+            self.kick_piece(self.not_occupied(col))
+        side = self.out_of_bounds()
+        if side is None:
+            return True
+
+    def blocked(self):
         x, y = piece.current_pos[0], piece.current_pos[1]
         for row in range(4):
             for col in range(4):
                 try:
                     if (piece.holding[row][col] == 1) and (self.grid.array[x+row][y+col] == 2):
-                        print('Blocked by piece')
-                        return True
-                except: pass
-
-    def replace(self, pos, shape):
-        piece.current_pos = pos
-        piece.holding = shape
+                        print('Blocked')
+                        return col
+                except: 
+                    return False
+                
+    def not_occupied(self, col): 
+        x, y = piece.current_pos[0], piece.current_pos[1]
+        if col <= 1:
+            direction = -1
+        elif col >= 2:
+            direction = 1
+        for row in range(4):
+            for col in range(4):
+                try: 
+                    if (piece.holding[row][col] == 1) and (self.grid.array[x+row][y+col+direction] == 2):
+                        return None
+                except:
+                    return None
+                else:
+                    return False if direction == 1 else True
+                
+    def replace(self, pos, shape, place_only=False):
+        if not place_only:
+            piece.current_pos = pos
+            piece.holding = shape
         x, y = pos[0], pos[1]
         coords = []
         for row in range(4):
@@ -125,10 +151,7 @@ class Move:
                     except: None
         self.draw(coords)
 
-
     bottom_collision = False
-
-    # arrumar bug do quadrado -> quadrado encostando a parte de baixo + rotação + mexer pro lado = não muda pra peça estática
 
     def check_bottom_collision(self):
         collision = False
@@ -178,22 +201,30 @@ class Move:
                 self.left_collision = False
 
     def freeze(self):
-        coords =  np.transpose(np.nonzero(self.grid.array == 1))
-        for pos in coords:
-            x, y = pos[0], pos[1]
-            self.grid.array[x][y] = 2
+        self.dynamic_to_static()
         self.bottom_collision = self.left_collision = self.right_collision_collision = False
         self.stop_list = []
         self.spawn_next()
         
     def spawn_next(self):
         random_shape = piece.get_random_shape()
+        random_shape = sshape
         pos = [5,4]
         self.orientation = 1
         piece.current_pos = pos
         piece.hold_rotation = random_shape.rotation
         piece.holding = piece.hold_rotation[0]
         self.replace(pos, random_shape.shape_0)
+
+    def dynamic_to_static(self):
+        coords =  np.transpose(np.nonzero(self.grid.array == 1))
+        for pos in coords:
+            x, y = pos[0], pos[1]
+            self.grid.array[x][y] = 2
+
+    def spawn_piece(self, pos, shape):
+        self.replace(pos, shape, place_only=True)
+        self.dynamic_to_static()
 
     stop_list = []
 
@@ -394,3 +425,4 @@ oshape = OShape()
 ishape = IShape()
 
 piece = Piece(sshape, zshape, lshape, jshape, tshape, oshape, ishape)
+
