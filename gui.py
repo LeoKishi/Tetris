@@ -6,20 +6,6 @@ class Display:
     def __init__(self):
         '''
         Initialize the game window.
-
-        Methods
-        -------
-        print_grid()
-            Prints the game grid into the console.
-
-        update_display()
-            Draws the game grid on the display.
-
-        reset_game()
-            Erases everything from the array and updates the display.
-
-        spawn_piece(piece, pos):
-            Creates a new piece on the game grid at the specified position.
         '''
 
         self.root = tk.Tk()
@@ -65,7 +51,8 @@ class Display:
                 self.square[x][y].grid_forget()
 
         # 2D array to represent the game grid
-        self.array = [[0 for width in range(10)] for height in range(24)]
+        self.array = [[[0, ''] for width in range(10)] for height in range(24)]
+    
     
     def print_grid(self):
         '''
@@ -74,7 +61,6 @@ class Display:
         1 = moving piece\n
         2 = static piece
         '''
-
         print()
         for i, j in enumerate(self.array):
             if i == 4:
@@ -82,38 +68,40 @@ class Display:
             print(j)
         print()
 
+
     def update_display(self):
         '''Draws the game grid based on the values for each position in the array.'''
         for x in range(24):
             for y in range(10):
-                if self.array[x][y] == 0:
-                    self.square[x][y]['bg'] = '#1a1a1a'
+                if self.array[x][y][0] == 0:
+                    self.square[x][y].config(bg='#1a1a1a',
+                                             borderwidth=1,
+                                             relief=tk.RIDGE)
                 else:
-                    self.square[x][y]['bg'] = 'white'
+                    self.square[x][y].config(bg=self.array[x][y][1],
+                                             borderwidth=5,
+                                             relief=tk.RAISED)
+
 
     def reset_game(self):
         '''Erases everything from the array and updates the display.'''
         self.array = [[0 for width in range(10)] for height in range(24)]
         self.update_display()
 
-    def spawn_piece(self, piece: list[int], pos: tuple[int, int]):
+
+    def spawn_piece(self, piece: list[list[int]], pos: tuple[int, int], color: str):
         '''
         Creates a new piece on the game grid at the specified position.\n
         Does not check wether the position is empty or not.
-
-        Parameters:
-            piece:
-                2D list with the position of each square that forms the piece
-            pos:
-                (x, y) position where the piece is going to be spawned
         '''
-
         width, height = len(piece[0]), len(piece)
         x, y = pos[0], pos[1]
-        for i in range(width):
-            for j in range(height):
-                if self.array[x+i][y+j] == 0 and piece[i][j] == 1:
-                    self.array[x+i][y+j] = 1
+        for i in range(height):
+            for j in range(width):
+                if self.array[x+i][y+j][0] == 0 and piece[i][j] == 1:
+                    self.array[x+i][y+j][0] = 1
+                    self.array[x+i][y+j][1] = color
+                    
                 
 
 
@@ -121,7 +109,6 @@ class Display:
 if __name__ == '__main__':
     display = Display()
 
-    display.spawn_piece(piece.Tshape.rot1, (20,5))
     display.print_grid()
     display.update_display()
 
