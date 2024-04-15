@@ -17,6 +17,22 @@ class Move:
             self.spawn_piece(array, self.current_piece, self.current_pos, self.current_shape.color)
 
 
+    def right(self, array: list[list[int]]):
+        if self.right_is_empty(array):
+            self.erase_old_position(array)
+            x, y = self.current_pos[0], self.current_pos[1]
+            self.current_pos = (x, y+1)
+            self.spawn_piece(array, self.current_piece, self.current_pos, self.current_shape.color)
+
+
+    def left(self, array: list[list[int]]):
+        if self.left_is_empty(array):
+            self.erase_old_position(array)
+            x, y = self.current_pos[0], self.current_pos[1]
+            self.current_pos = (x, y-1)
+            self.spawn_piece(array, self.current_piece, self.current_pos, self.current_shape.color)
+
+
     def erase_old_position(self, array: list[list[int]]):
         '''
         Removes the current piece from the array.\n
@@ -47,7 +63,27 @@ class Move:
             if x+1 >= 24 or  array[x+1][y][0] == 2:
                 return False
         return True
+    
 
+    def right_is_empty(self, array: list[list[int]]) -> bool:
+        '''Checks for obstacles to the right of the piece. Returns False if blocked, True otherwise.'''
+        positions = self.get_positions(array)
+        for pos in positions:
+            x, y = pos[0], pos[1]
+            if y+1 >= 10 or array[x][y+1][0] == 2:
+                return False
+        return True
+
+
+    def left_is_empty(self, array: list[list[int]]) -> bool:
+        '''Checks for obstacles to the left of the piece. Returns False if blocked, True otherwise.'''
+        positions = self.get_positions(array)
+        for pos in positions:
+            x, y = pos[0], pos[1]
+            if y-1 < 0 or array[x][y-1][0] == 2:
+                return False
+        return True
+    
 
     def spawn_piece(self, array: list[list[int]], piece: list[list[int]], pos: tuple[int, int], color: str):
         '''
@@ -58,7 +94,7 @@ class Move:
         x, y = pos[0], pos[1]
         for i in range(height):
             for j in range(width):
-                if x+i < 24 and array[x+i][y+j][0] == 0 and piece[i][j] == 1:
+                if x+i < 24 and y+j < 10 and array[x+i][y+j][0] == 0 and piece[i][j] == 1:
                     array[x+i][y+j][0] = 1
                     array[x+i][y+j][1] = color
 

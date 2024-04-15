@@ -24,12 +24,14 @@ def actions(key: str):
             display.print_grid()
         # move piece one step to the right
         case 'Right':
-            print('right')
-            ...
+            move.right(display.array)
+            display.update_display()
+            display.print_grid()
         # move piece one step to the left    
         case 'Left':
-            print('left')
-            ...
+            move.left(display.array)
+            display.update_display()
+            display.print_grid()
         # drop piece
         case 'space':
             print('space')
@@ -43,7 +45,10 @@ def actions(key: str):
 
 
 if __name__ == '__main__':
-    shape = piece.Tshape
+    display.array[10][3][0] = 2
+
+
+    shape = piece.Sshape
 
     display.spawn_piece(shape.rot1, (5,5), shape.color)
     move.current_shape = shape
