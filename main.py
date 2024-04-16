@@ -2,13 +2,16 @@ from gui import Display
 from movement import Move
 from collision import Collision
 from points import Points
-import piece
+from piece import Choice
 
 
 class Clock:
     # variables to store tkinter 'after' function execution id
     timer_stop_id = None
     game_tick_stop_id = None
+
+    # game tick speed
+    speed = 720
 
     def start_timer(self):
         '''Starts the timer. If the timer reaches the limit, the current piece freezes.'''
@@ -26,7 +29,7 @@ class Clock:
             move.down(display.array)
             display.update_display()
             freeze_timer()
-        self.game_tick_stop_id = display.root.after(500, self.start_game_tick)
+        self.game_tick_stop_id = display.root.after(self.speed, self.start_game_tick)
 
     def stop_game_tick(self):
         '''Stops the game tick clock if the clock is currently running.'''
@@ -40,7 +43,7 @@ clock = Clock()
 display = Display()
 move = Move()
 collision = Collision()
-choice = piece.Choice()
+choice = Choice()
 points = Points()
 
 
@@ -50,54 +53,55 @@ display.root.bind('<Key>', lambda event: actions(event.keysym))
 
 def actions(key: str):
     '''Executes action for corresponding key pressed.'''
-    match key:
-        # rotate piece
-        case 'Up':
-            move.rotate(display.array)
-            display.update_display()
-
-        # move piece one step downwards
-        case 'Down':
-            if move.down(display.array):
+    if not move.topped_out:
+        match key:
+            # rotate piece
+            case 'Up':
+                move.rotate(display.array)
                 display.update_display()
-                points.score += 1
+
+            # move piece one step downwards
+            case 'Down':
+                if move.down(display.array):
+                    display.update_display()
+                    points.score += 1
+                    display.score_var.set(points.score)
+
+            # move piece one step to the right
+            case 'Right':
+                move.right(display.array)
+                display.update_display()
+
+            # move piece one step to the left    
+            case 'Left':
+                move.left(display.array)
+                display.update_display()
+
+            # drop piece
+            case 'space':
+                count = move.drop(display.array)
+                points.score += count*2
                 display.score_var.set(points.score)
-
-        # move piece one step to the right
-        case 'Right':
-            move.right(display.array)
-            display.update_display()
-
-        # move piece one step to the left    
-        case 'Left':
-            move.left(display.array)
-            display.update_display()
-
-        # drop piece
-        case 'space':
-            count = move.drop(display.array)
-            points.score += count*2
-            display.score_var.set(points.score)
-            freeze()
-            display.update_display()
-
-        # hold piece
-        case 'c':
-            if move.can_store_piece:
-                if move.stored_piece is not None:
-                    stored_piece = move.stored_piece
-                    move.hold_piece(display.array)
-                    move.new_piece(display.array, stored_piece)
-                elif move.stored_piece is None:
-                    move.hold_piece(display.array)
-                    move.new_piece(display.array, choice.dequeue())
-
+                freeze()
                 display.update_display()
-                display.load_stored_piece(move.stored_piece)
-                display.load_queue(choice.queue)
-                move.can_store_piece = False
-            
-    freeze_timer()
+
+            # hold piece
+            case 'c':
+                if move.can_store_piece:
+                    if move.stored_piece is not None:
+                        stored_piece = move.stored_piece
+                        move.hold_piece(display.array)
+                        move.new_piece(display.array, stored_piece)
+                    elif move.stored_piece is None:
+                        move.hold_piece(display.array)
+                        move.new_piece(display.array, choice.dequeue())
+
+                    display.update_display()
+                    display.load_stored_piece(move.stored_piece)
+                    display.load_queue(choice.queue)
+                    move.can_store_piece = False
+                
+        freeze_timer()
 
 
 def freeze_timer():
@@ -113,16 +117,28 @@ def freeze():
     '''Freezes the current piece, checks for completed lines and spawn the next piece.'''
     clock.stop_game_tick()
     move.freeze_piece(display.array)
+
+    if collision.top_out(display.array):
+        move.clear(display.array)
+        move.topped_out = True
+        print('top out')
+        return
+
     if lines := points.search_completed_lines(display.array):
         points.clear_and_collapse(display.array, lines)
         points.score += points.get_points(lines)
         display.lines_var.set(points.lines)
         display.score_var.set(points.score)
+        set_game_speed()
+
     move.new_piece(display.array, choice.dequeue())
+
     display.load_queue(choice.queue)
     display.update_display()
+
     clock.start_game_tick()
     move.can_store_piece = True
+    clock.timer_stop_id = None
 
 
 def start_game():
@@ -133,15 +149,20 @@ def start_game():
     display.update_display()
     clock.start_game_tick()
 
-
-
+    
+def set_game_speed():
+    '''Speeds up the game tick as the game progresses.'''
+    if clock.speed > 150:
+        clock.speed = 720 - (70*points.level)
+    elif clock.speed > 40:
+        clock.speed -= 10
 
 
 
 
 if __name__ == '__main__':
     start_game()
-
+    points.lines = 80
     
 
 

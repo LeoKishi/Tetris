@@ -126,6 +126,14 @@ class Collision:
                 return True
 
 
+    def top_out(self, array: list[list[int]]):
+        '''Checks if the stack is in the spawning zone.'''
+        for i in range(2):
+            if 2 in {val[0] for val in array[i]}:
+                return True
+        return False
+
+
 
 
 

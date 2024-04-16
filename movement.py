@@ -11,6 +11,7 @@ class Move:
     current_pos = None
     stored_piece = None
     can_store_piece = True
+    topped_out = False
 
 
     def rotate(self, array: list[list[int]]):
@@ -189,6 +190,16 @@ class Move:
         self.stored_piece = self.current_shape
         self.clear_old_position(array)
 
+
+    def clear(self, array: list[list[int]]):
+        '''Resets attributes and clears the current piece from the array.'''
+        self.current_shape = None
+        self.current_piece = None
+        self.angle = None
+        self.current_pos = None
+        self.stored_piece = None
+        self.can_store_piece = True
+        self.clear_old_position(array)
 
 
 
