@@ -53,13 +53,31 @@ class Points:
         self.score = 0
 
 
+    def get_highscore(self) -> int:
+        '''Returns the last saved highscore.'''
+        file = open('resource/highscore.txt', 'r')
+        score = file.readline()
+        file.close()
+        return int(score)
+
+
+    def new_highscore(self, score: int):
+        '''Registers a new highscore.'''
+        file = open('resource/highscore.txt', 'w')
+        file.write(str(score))
+        file.close()
+
+
+
 
 if __name__ == '__main__':
+    score = Points()
 
+    score.get_highscore()
 
+    score.new_highscore(10000)
 
-
-
+    score.get_highscore()
 
 
     ...

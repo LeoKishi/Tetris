@@ -1,4 +1,5 @@
 import tkinter as tk
+import winsound
 
 
 class Display:
@@ -32,6 +33,8 @@ class Display:
         for x in range(2):
             for y in range(10):
                 self.square[x][y].grid_forget()
+
+        winsound.PlaySound('assets/ambience.wav', winsound.SND_LOOP + winsound.SND_ASYNC)
 
     # 2D array to represent the game grid
     array = [[[0, ' '] for width in range(10)] for height in range(22)]
@@ -88,6 +91,7 @@ class Display:
     def reset_game(self):
         '''Erases everything from the array and updates the display.'''
         self.array = [[[0, ' '] for width in range(10)] for height in range(22)]
+        self.reset_piece_display()
         self.update_display()
                     
 
@@ -232,19 +236,24 @@ class Display:
                                                     bg='#1a1a1a',
                                                     pady=(5))
 
-        self.ending_highscorescore_header_label = tk.Label(self.info_frame,
-                                                            text='HIGHSCORE:',
-                                                            font=('Calibri', 12),
-                                                            fg='white',
-                                                            bg='#1a1a1a',
-                                                            pady=(5))
+        self.ending_highscore_header_label = tk.Label(self.info_frame,
+                                                    text='HIGHSCORE:',
+                                                    font=('Calibri', 12),
+                                                    fg='white',
+                                                    bg='#1a1a1a',
+                                                    pady=(5))
 
-        self.ending_highscorescore_value_label = tk.Label(self.info_frame,
-                                                            text='TBD',
-                                                            font=('Calibri', 12),
-                                                            fg='white',
-                                                            bg='#1a1a1a',
-                                                            pady=(5))
+        self.ending_highscore_value_label = tk.Label(self.info_frame,
+                                                    font=('Calibri', 12),
+                                                    fg='white',
+                                                    bg='#1a1a1a',
+                                                    pady=(5))
+        
+        self.new_highscore_label = tk.Label(self.info_frame,
+                                            font=('Calibri', 12),
+                                            fg='white',
+                                            bg='#1a1a1a',
+                                            pady=(5))
         
         self.play_again_label = tk.Label(self.info_frame,
                                         text='PRESS SPACE TO PLAY AGAIN',
@@ -366,7 +375,7 @@ class Display:
         return stack
 
 
-    def ending_animation(self, lines: int, score: int):
+    def ending_animation(self):
         '''Paints the stack with a wave effect then erases the grid.'''
         time = 0
         for line in self.get_stack():
@@ -374,7 +383,7 @@ class Display:
                 time += 50
                 self.root.after(time, self.paint_white, line)
         self.root.after(time + 1200, self.reset_game)
-        self.root.after(time + 2000, self.show_ending_info, lines, score)
+        self.root.after(time + 2000, self.show_ending_info)
 
 
     def paint_white(self, line):
@@ -385,8 +394,8 @@ class Display:
             self.array[x][y][1] = 'W'
 
 
-    def show_ending_info(self, lines: int, score: int):
-        self.reset_piece_display()
+    def show_ending_info(self):
+        '''Displays the game over screen.'''
         self.lines_var.set(0)
         self.score_var.set(0)
 
@@ -398,20 +407,21 @@ class Display:
         self.info_frame.pack(fill='x', pady=(150,0))
 
         self.ending_lines_header_label.pack()
-        self.ending_lines_value_label['text'] = lines
         self.ending_lines_value_label.pack()
 
         self.ending_score_header_label.pack(pady=(20,0))
-        self.ending_score_value_label['text'] = score
         self.ending_score_value_label.pack()
 
-        self.ending_highscorescore_header_label.pack(pady=(60,0))
-        self.ending_highscorescore_value_label.pack()
+        self.ending_highscore_header_label.pack(pady=(60,0))
+        self.ending_highscore_value_label.pack()
 
-        self.play_again_label.pack(pady=(100,0))
+        self.new_highscore_label.pack()
+
+        self.play_again_label.pack(pady=(70,0))
 
 
     def hide_ending_info(self):
+        '''Hides the game over screen.'''
         self.ending_frame.pack_forget()
 
         self.grid_frame.pack(side=tk.LEFT, padx=(20,20), pady=(20,20))
@@ -419,16 +429,32 @@ class Display:
 
 
     def ghost_piece(self, positions: list[int], color_code: str):
+        '''Paints the ghost piece with the corresponding color.'''
         for pos in positions:
             x, y = pos[0], pos[1]
             self.square[x][y]['bg'] = self.ghost_color[color_code]
 
 
+    def show_score(self, lines: int, score: int, highscore: str, is_highscore: bool = False):
+        '''Assign values to be shown in the game over screen.'''
+        self.ending_lines_value_label['text'] = lines
+        self.ending_score_value_label['text'] = score
+        self.ending_highscore_value_label['text'] = highscore
+        if is_highscore:
+            self.new_highscore_label['text'] = 'New Highscore!'
+        else:
+            self.new_highscore_label['text'] = ''
+
+
+
+
+
 
 if __name__ == '__main__':
+    import winsound
+
     display = Display()
 
-   
     
 
 

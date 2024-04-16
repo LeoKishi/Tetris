@@ -3,6 +3,7 @@ from movement import Move
 from collision import Collision
 from points import Points
 from piece import Choice
+from playsound import playsound
 
 
 class Clock:
@@ -82,6 +83,7 @@ def actions(key: str):
 
             # drop piece
             case 'space':
+                playsound('assets/click.wav', block=False)
                 clock.stop_timer()
                 count = move.drop(display.array)
                 points.score += count*2
@@ -97,6 +99,7 @@ def actions(key: str):
                         stored_piece = move.stored_piece
                         move.hold_piece(display.array)
                         move.new_piece(display.array, stored_piece)
+
                     elif move.stored_piece is None:
                         move.hold_piece(display.array)
                         move.new_piece(display.array, choice.dequeue())
@@ -131,14 +134,30 @@ def freeze():
 
     if collision.top_out(display.array):
         move.topped_out = True
-        display.ending_animation(lines=points.lines, score=points.score)
+
+        if is_highscore:= points.score > points.get_highscore():
+            points.new_highscore(points.score)
+
+        display.show_score(points.lines, points.score, points.get_highscore(), is_highscore)
+        display.ending_animation()
+
+        playsound('assets/top out.wav', block=False)
+
         reset_values()
+
         display.root.after(2750, enable_play_again)
         return
 
     if lines := points.search_completed_lines(display.array):
         points.clear_and_collapse(display.array, lines)
+
+        if len(lines) < 3:
+            playsound('assets/small clear.wav', block=False)
+        else:
+            playsound('assets/big clear.wav', block=False)
+
         points.score += points.get_points(lines)
+
         display.lines_var.set(points.lines)
         display.score_var.set(points.score)
         set_game_speed()
@@ -156,9 +175,12 @@ def freeze():
 def start_game():
     '''Loads the queue, spawns a new piece and starts the game tick clock.'''
     choice.fill_queue()
+
     move.new_piece(display.array, choice.dequeue())
+
     display.load_queue(choice.queue)
     display.update_display()
+
     clock.start_game_tick()
     clock.game_is_paused = False
 
@@ -175,6 +197,7 @@ def reset_values():
     move.clear(display.array)
     points.clear()
     choice.clear()
+    clock.speed = 720
 
 
 def enable_play_again():
@@ -183,7 +206,11 @@ def enable_play_again():
 
 
 if __name__ == '__main__':
+
     start_game()    
+
+
+
 
 
 
