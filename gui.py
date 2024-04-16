@@ -11,26 +11,94 @@ class Display:
         self.root.resizable(0,0)
         self.root.title('TETRIS')
 
-        # frame creation
+        # frames
         self.main_window = tk.Frame(self.root,
-                                    height=600,
-                                    width=400,
                                     bg='#2d2a30')
         
+        self.left_side_frame = tk.Frame(self.main_window,
+                                   bg='#2d2a30')
+
+        self.hold_frame = tk.Frame(self.left_side_frame,
+                                   height=100,
+                                   width=100,
+                                   borderwidth=5,
+                                   relief=tk.SUNKEN,
+                                   bg='#1a1a1a')
+
         self.grid_frame = tk.Frame(self.main_window,
                                    borderwidth=3,
                                    relief=tk.SUNKEN)
         
-        self.side_frame = tk.Frame(self.main_window,
-                                   height=600,
-                                   width=200,
+        self.right_side_frame = tk.Frame(self.main_window,
+                                   bg='#2d2a30')
+
+        self.info_frame = tk.Frame(self.right_side_frame,
+                                   height=300,
+                                   width=100,
+                                   bg='#1a1a1a',
+                                   borderwidth=5,
+                                   relief=tk.SUNKEN)
+        
+        self.next_frame = tk.Frame(self.right_side_frame,
+                                   height=100,
+                                   width=100,
+                                   borderwidth=5,
+                                   relief=tk.SUNKEN,
                                    bg='#1a1a1a')
 
-        # frame packing
-        self.main_window.pack()
-        self.grid_frame.pack(side=tk.LEFT, padx=(20,20), pady=(20,20))
-        self.side_frame.pack(side=tk.RIGHT, padx=(0,20))
+        # labels
+        self.hold_label = tk.Label(self.left_side_frame,
+                                   text='HOLD',
+                                   font=('Calibri', 20, 'bold'),
+                                   fg='white',
+                                   borderwidth=3,
+                                   relief=tk.RIDGE,
+                                   bg='#3f3845',
+                                   pady=(5))
+        
+        self.lines_header_label = tk.Label(self.left_side_frame,
+                                   text='LINES',
+                                   font=('Calibri', 20, 'bold'),
+                                   fg='white',
+                                   borderwidth=3,
+                                   relief=tk.RIDGE,
+                                   bg='#3f3845',
+                                   pady=(5))
+        
+        self.lines_value_label = tk.Label(self.left_side_frame,
+                                   text='0',
+                                   font=('Calibri', 20, 'bold'),
+                                   fg='white',
+                                   borderwidth=5,
+                                   relief=tk.SUNKEN,
+                                   bg='#1a1a1a',
+                                   pady=(5))
 
+        self.next_label = tk.Label(self.right_side_frame,
+                                   text='NEXT',
+                                   font=('Calibri', 20, 'bold'),
+                                   fg='white',
+                                   borderwidth=3,
+                                   relief=tk.RIDGE,
+                                   bg='#3f3845',
+                                   pady=(5))
+
+        # widget packing
+        self.main_window.pack()
+
+        self.left_side_frame.pack(side=tk.LEFT, fill='y')
+        self.hold_label.pack(side=tk.TOP, padx=(20,0), pady=(20,0), anchor=tk.N, fill='x')
+        self.hold_frame.pack(side=tk.TOP, padx=(20,0), pady=(10,0))
+        self.lines_header_label.pack(side=tk.TOP, padx=(20,0), pady=(100,0), fill='x')
+        self.lines_value_label.pack(side=tk.TOP, padx=(20,0), pady=(10,0), fill='x')
+
+        self.grid_frame.pack(side=tk.LEFT, padx=(20,20), pady=(20,20))
+
+        self.right_side_frame.pack(side=tk.RIGHT, fill='y')
+        self.next_label.pack(side=tk.TOP, padx=(0,20), pady=(20,0), anchor=tk.N, fill='x')
+        self.next_frame.pack(side=tk.TOP, padx=(0,20), pady=(10,20))
+        self.info_frame.pack(side=tk.TOP, padx=(0,20), pady=(0,20))
+        
         # populating 'grid_frame' with small square frames in a grid
         self.square = [[None for width in range(10)] for height in range(22)]
         for x in range(22):
@@ -40,7 +108,7 @@ class Display:
                                              width=30,
                                              borderwidth=1,
                                              bg='#1a1a1a',
-                                             relief=tk.RIDGE)
+                                             relief=tk.FLAT)
                 
                 self.square[x][y].grid(row=x, column=y)
 
@@ -85,7 +153,7 @@ class Display:
                 if self.array[x][y][0] == 0:
                     self.square[x][y].config(bg='#1a1a1a',
                                              borderwidth=1,
-                                             relief=tk.RIDGE)
+                                             relief=tk.FLAT)
                 else:
                     self.square[x][y].config(bg=self.color.get(self.array[x][y][1]),
                                              borderwidth=5,
@@ -107,8 +175,5 @@ class Display:
 
 if __name__ == '__main__':
     display = Display()
-
-    display.print_grid()
-    display.update_display()
 
     display.root.mainloop()
