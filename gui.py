@@ -46,6 +46,15 @@ class Display:
              'T':'#bb63d6', # purple
              'W':'white'} 
     
+    # hex color value for ghost pieces
+    ghost_color = {'Z':'#401c1c', # red
+                   'L':'#332717', # orange
+                   'O':'#323317', # yellow
+                   'S':'#1c3317', # green
+                   'I':'#173330', # cyan                     
+                   'J':'#1c2940', # blue
+                   'T':'#2c1733'} # purple
+
     
     def print_grid(self):
         '''
@@ -368,7 +377,6 @@ class Display:
         self.root.after(time + 2000, self.show_ending_info, lines, score)
 
 
-
     def paint_white(self, line):
         '''Paints the squares white.'''
         for pos in line:
@@ -408,6 +416,12 @@ class Display:
 
         self.grid_frame.pack(side=tk.LEFT, padx=(20,20), pady=(20,20))
         self.grid_frame.pack_propagate(0)
+
+
+    def ghost_piece(self, positions: list[int], color_code: str):
+        for pos in positions:
+            x, y = pos[0], pos[1]
+            self.square[x][y]['bg'] = self.ghost_color[color_code]
 
 
 

@@ -31,6 +31,7 @@ class Clock:
             move.down(display.array)
             display.update_display()
             freeze_timer()
+            display.ghost_piece(move.get_ghost_piece(display.array), move.current_shape.code)
         self.game_tick_stop_id = display.root.after(self.speed, self.start_game_tick)
 
     def stop_game_tick(self):
@@ -106,6 +107,7 @@ def actions(key: str):
                     move.can_store_piece = False
 
         freeze_timer()
+        display.ghost_piece(move.get_ghost_piece(display.array), move.current_shape.code)
 
     elif key == 'space' and clock.game_is_paused:
         move.topped_out = False

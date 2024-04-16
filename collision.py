@@ -113,6 +113,19 @@ class Collision:
         return True
 
 
+    def try_move_bottom(self, array: list[list[int]], piece: list[list[int]], pos: tuple[int, int], step: int = 1) -> bool:
+        '''Returns True if the piece can be moved left by the specified amount of steps, returns False otherwise.'''
+        width, height = len(piece[0]), len(piece)
+        x, y = pos[0] + step, pos[1]
+        for i in range(height):
+            for j in range(width):
+                if not self.in_bounds(x=x+i) and piece[i][j] == 1:
+                    return False
+                elif self.in_bounds(x=x+i, y=y+j) and array[x+i][y+j][0] == 2 and piece[i][j] == 1:
+                    return False
+        return True
+
+
     def in_bounds(self, x=False, y=False) -> bool:
         '''Checks if x and/or y is inside bounds.'''
         if y is False:

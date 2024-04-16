@@ -202,6 +202,35 @@ class Move:
         self.clear_old_position(array)
 
 
+    def find_ghost_position(self, array: list[list[int]]) -> tuple[int, int]:
+        '''Find the bottommost position the piece can be moved to.'''
+        counter = 0
+        x, y = self.current_pos[0], self.current_pos[1]
+
+        while collision.try_move_bottom(array, self.current_piece[self.angle], self.current_pos, step=counter+1):
+            counter += 1
+
+        return (x+counter, y)
+
+
+    def get_ghost_piece(self, array: list[list[int]]):
+        '''Returns True if the piece can be moved left by the specified amount of steps, returns False otherwise.'''
+        piece = self.current_piece[self.angle]
+        width, height = len(piece[0]), len(piece)
+
+        pos = self.find_ghost_position(array)
+        x, y = pos[0], pos[1]
+
+        positions = []
+
+        for i in range(height):
+            for j in range(width):
+                if collision.in_bounds(x=x+i, y=y+j) and array[x+i][y+j][0] == 0 and piece[i][j] == 1:
+                    positions.append((x+i, y+j))
+
+        return positions
+
+
 
 
 if __name__ == '__main__':
