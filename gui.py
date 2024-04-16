@@ -6,7 +6,6 @@ class Display:
         '''
         Initialize the game window.
         '''
-
         self.root = tk.Tk()
         self.root.resizable(0,0)
         self.root.title('TETRIS')
@@ -15,7 +14,6 @@ class Display:
         self.create_labels()
         self.load_images()
         self.pack_widgets()
-
         
         # populating 'grid_frame' with small square frames in a grid
         self.square = [[None for width in range(10)] for height in range(22)]
@@ -45,8 +43,8 @@ class Display:
                       'S':'#74d663', # green
                       'I':'#63d6cc', # cyan                     
                       'J':'#6389d6', # blue
-                      'T':'#bb63d6'} # purple
-
+                      'T':'#bb63d6', # purple
+                      'W':'white'} 
     
     
     def print_grid(self):
@@ -266,6 +264,7 @@ class Display:
 
 
     def load_queue(self, queue: list[object]):
+        '''Shows the pieces in queue on the GUI.'''
         self.next_image['image'] = self.image[queue[0].code]
         self.queue1_image['image'] = self.image[queue[1].code]
         self.queue2_image['image'] = self.image[queue[2].code]
@@ -273,16 +272,65 @@ class Display:
 
 
     def load_stored_piece(self, stored_piece: object):
+        '''Shows the stored piece on the GUI.'''
         self.hold_image['image'] = self.image[stored_piece.code]
 
 
+    def get_stack(self) -> list[tuple[int, int]]:
+        '''Returns a list with the position of every square of the stack.'''
+        stack = []
+        for x in range(22):
+            stack.append([])
+            for y in range(10):
+                if self.array[x][y][0] == 2:
+                    stack[x].append((x,y))
+        return stack
 
 
+    def ending_animation(self):
+        '''Paints the stack with a wave effect.'''
+        time = 0
+        for line in self.get_stack():
+            if line:
+                time += 50
+                self.root.after(time, self.paint_white, line)
+        self.root.after(time, self.sweep_stack)
+        
 
+    def paint_white(self, line):
+        '''Paints the squares white.'''
+        for pos in line:
+            x, y = pos[0], pos[1]
+            self.square[x][y]['bg'] = 'white'
+            self.array[x][y][1] = 'W'
+
+
+    def sweep_stack(self):
+        '''Pops the lines in sequence.'''
+        time = 200
+        for i in range(22):
+            time += 150
+            #print(time)
+            self.root.after(time, self.pop_line)
+
+
+    def pop_line(self):
+        '''Pops the bottommost line.'''
+        self.array.pop()
+        self.array.insert(0, [[0, ' '] for width in range(10)])
+        self.update_display()
 
 
 
 if __name__ == '__main__':
     display = Display()
 
-    display.root.mainloop()
+    display.sweep_stack()
+
+
+
+
+
+
+
+    #display.root.mainloop()

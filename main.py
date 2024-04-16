@@ -121,7 +121,7 @@ def freeze():
     if collision.top_out(display.array):
         move.clear(display.array)
         move.topped_out = True
-        print('top out')
+        display.ending_animation()
         return
 
     if lines := points.search_completed_lines(display.array):
@@ -161,10 +161,7 @@ def set_game_speed():
 
 
 if __name__ == '__main__':
-    start_game()
-    points.lines = 80
-    
-
+    start_game()    
 
 
 
