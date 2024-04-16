@@ -53,13 +53,14 @@ class Display:
         self.array = [[[0, ' '] for width in range(10)] for height in range(22)]
 
         # hex color value for each piece
-        self.color = {'T':'#c384d1',
-                 'S':'#78cc4e',
-                 'Z':'#fc264a',
-                 'L':'#f78b2d',
-                 'J':'#2c4f99',
-                 'O':'#fcde44',
-                 'I':'#a1ffff'}
+        self.color = {'Z':'#d66363', # red
+                      'L':'#d6a463', # orange
+                      'O':'#d4d663', # yellow
+                      'S':'#74d663', # green
+                      'I':'#63d6cc', # cyan                     
+                      'J':'#6389d6', # blue
+                      'T':'#bb63d6'} # purple
+
     
     
     def print_grid(self):

@@ -2,6 +2,7 @@ from gui import Display
 from movement import Move
 from collision import Collision
 import piece
+import random
 
 
 class Clock:
@@ -10,7 +11,7 @@ class Clock:
     game_tick_stop_id = None
 
     def start_timer(self):
-        '''Starts the timer'''
+        '''Starts the timer. If the timer reaches the limit, the current piece freezes.'''
         self.timer_stop_id = display.root.after(1000, freeze)
 
     def stop_timer(self):
@@ -36,6 +37,7 @@ display = Display()
 move = Move()
 collision = Collision()
 clock = Clock()
+bag = piece.PieceBag()
 
 # bind user input
 display.root.bind('<Key>', lambda event: actions(event.keysym))
@@ -78,6 +80,7 @@ def actions(key: str):
     display.print_grid()
 
     # check if the piece is on the floor or on top of another piece
+        # start/stop the piece freeze timer
     if not collision.bottom_is_empty(display.array):
         if clock.timer_stop_id is None:
             clock.start_timer()
@@ -86,19 +89,22 @@ def actions(key: str):
 
 
 def freeze():
-    '''Freezes the piece and spawns the next one. Resets the game tick.'''
+    '''Freezes the current piece and spawns the next one. Resets the game tick.'''
     clock.stop_game_tick()
     move.freeze_piece(display.array)
 
-    move.new_piece(display.array, (0,3), piece.Tshape)
+    move.new_piece(display.array, (0,3), bag.get_piece())
     display.update_display()
     clock.start_game_tick()
+
+
+
 
 
 if __name__ == '__main__':
     #display.array[10][3][0] = 2
 
-    move.new_piece(display.array, (0,3), piece.Tshape)
+    move.new_piece(display.array, (0,3), bag.get_piece())
 
     clock.start_game_tick()
 
