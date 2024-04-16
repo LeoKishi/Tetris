@@ -15,7 +15,7 @@ class Tshape:
             [1,1,0],
             [0,1,0]]
     
-    color = '#c384d1'
+    color = 'T'
 
 
 class Sshape:
@@ -35,7 +35,7 @@ class Sshape:
             [1,1,0],
             [1,0,0]]
 
-    color = '#78cc4e'
+    color = 'S'
 
 
 class Zshape:
@@ -55,7 +55,7 @@ class Zshape:
             [1,1,0],
             [0,1,0]]
     
-    color = '#fc264a'
+    color = 'Z'
 
 
 class Lshape:
@@ -75,7 +75,7 @@ class Lshape:
             [0,1,0],
             [0,1,0]]
     
-    color = '#f78b2d'
+    color = 'L'
 
 
 class Jshape:
@@ -95,7 +95,7 @@ class Jshape:
             [0,1,0],
             [1,1,0]]
 
-    color = '#2c4f99'
+    color = 'J'
 
 
 class Oshape:
@@ -115,7 +115,7 @@ class Oshape:
             [0,1,1,0],
             [0,0,0,0]]
     
-    color = '#fcde44'
+    color = 'O'
 
 
 class Ishape:
@@ -139,7 +139,7 @@ class Ishape:
             [0,1,0,0],
             [0,1,0,0]]
 
-    color = '#a1ffff'
+    color = 'I'
 
 
 

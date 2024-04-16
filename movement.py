@@ -33,6 +33,15 @@ class Move:
             self.spawn_piece(array, self.current_piece, self.current_pos, self.current_shape.color)
 
 
+    def drop(self, array: list[list[int]]):
+        '''Moves the piece to the bottommost position it can move to.'''
+        while collision.bottom_is_empty(array):
+            self.clear_old_position(array)
+            x, y = self.current_pos[0], self.current_pos[1]
+            self.current_pos = (x+1, y)
+            self.spawn_piece(array, self.current_piece[self.angle], self.current_pos, self.current_shape.color)
+
+
     def erase_old_position(self, array: list[list[int]]):
         '''
         Removes the current piece from the array.\n
@@ -43,46 +52,6 @@ class Move:
                 if array[x][y][0] == 1:
                     array[x][y][0] = 0
                     array[x][y][1] = ''
-
-
-    def get_positions(self, array: list[list[int]]) -> list[tuple[int, int]]:
-        '''Returns the position of every square that make up the piece.'''
-        positions = []
-        for x in range(24):
-            for y in range(10):
-                if array[x][y][0] == 1:
-                    positions.append((x,y))
-        return positions
-    
-
-    def bottom_is_empty(self, array: list[list[int]]) -> bool:
-        '''Checks for obstacles under the piece. Returns False if blocked, True otherwise.'''
-        positions = self.get_positions(array)
-        for pos in positions:
-            x, y = pos[0], pos[1]
-            if x+1 >= 24 or  array[x+1][y][0] == 2:
-                return False
-        return True
-    
-
-    def right_is_empty(self, array: list[list[int]]) -> bool:
-        '''Checks for obstacles to the right of the piece. Returns False if blocked, True otherwise.'''
-        positions = self.get_positions(array)
-        for pos in positions:
-            x, y = pos[0], pos[1]
-            if y+1 >= 10 or array[x][y+1][0] == 2:
-                return False
-        return True
-
-
-    def left_is_empty(self, array: list[list[int]]) -> bool:
-        '''Checks for obstacles to the left of the piece. Returns False if blocked, True otherwise.'''
-        positions = self.get_positions(array)
-        for pos in positions:
-            x, y = pos[0], pos[1]
-            if y-1 < 0 or array[x][y-1][0] == 2:
-                return False
-        return True
     
 
     def spawn_piece(self, array: list[list[int]], piece: list[list[int]], pos: tuple[int, int], color: str):

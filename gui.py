@@ -50,8 +50,17 @@ class Display:
             for y in range(10):
                 self.square[x][y].grid_forget()
 
-        # 2D array to represent the game grid
-        self.array = [[[0, ''] for width in range(10)] for height in range(24)]
+    # 2D array to represent the game grid
+    array = [[[0, ' '] for width in range(10)] for height in range(24)]
+
+    # hex value for the color of each piece
+    color = {'T':'#c384d1', # purple
+             'S':'#78cc4e', # green
+             'Z':'#fc264a', # red
+             'L':'#f78b2d', # orange
+             'J':'#2c4f99', # blue
+             'O':'#fcde44', # yellow
+             'I':'#a1ffff'} # cyan
     
     
     def print_grid(self):
@@ -78,7 +87,7 @@ class Display:
                                              borderwidth=1,
                                              relief=tk.RIDGE)
                 else:
-                    self.square[x][y].config(bg=self.array[x][y][1],
+                    self.square[x][y].config(bg=self.color.get(self.array[x][y][1]),
                                              borderwidth=5,
                                              relief=tk.RAISED)
 
