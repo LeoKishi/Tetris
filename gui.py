@@ -1,5 +1,4 @@
 import tkinter as tk
-import piece
 
 
 class Display:
@@ -50,24 +49,24 @@ class Display:
             for y in range(10):
                 self.square[x][y].grid_forget()
 
-    # 2D array to represent the game grid
-    array = [[[0, ' '] for width in range(10)] for height in range(24)]
+        # 2D array to represent the game grid
+        self.array = [[[0, ' '] for width in range(10)] for height in range(24)]
 
-    # hex value for the color of each piece
-    color = {'T':'#c384d1', # purple
-             'S':'#78cc4e', # green
-             'Z':'#fc264a', # red
-             'L':'#f78b2d', # orange
-             'J':'#2c4f99', # blue
-             'O':'#fcde44', # yellow
-             'I':'#a1ffff'} # cyan
+        # hex color value for each piece
+        self.color = {'T':'#c384d1',
+                 'S':'#78cc4e',
+                 'Z':'#fc264a',
+                 'L':'#f78b2d',
+                 'J':'#2c4f99',
+                 'O':'#fcde44',
+                 'I':'#a1ffff'}
     
     
     def print_grid(self):
         '''
         Prints the game grid. The hidden portion of the grid (where pieces spawn) is separated by a line.\n
         0 = empty space\n
-        1 = moving piece\n
+        1 = current piece\n
         2 = static piece
         '''
         print()
@@ -96,22 +95,12 @@ class Display:
         '''Erases everything from the array and updates the display.'''
         self.array = [[0 for width in range(10)] for height in range(24)]
         self.update_display()
-
-
-    def spawn_piece(self, piece: list[list[int]], pos: tuple[int, int], color: str):
-        '''
-        Creates a new piece on the game grid at the specified position.\n
-        Does not check wether the position is empty or not.
-        '''
-        width, height = len(piece[0]), len(piece)
-        x, y = pos[0], pos[1]
-        for i in range(height):
-            for j in range(width):
-                if self.array[x+i][y+j][0] == 0 and piece[i][j] == 1:
-                    self.array[x+i][y+j][0] = 1
-                    self.array[x+i][y+j][1] = color
                     
-                
+    
+
+
+
+
 
 
 
