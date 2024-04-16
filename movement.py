@@ -100,6 +100,8 @@ class Move:
             x, y = self.current_pos[0], self.current_pos[1]
             self.current_pos = (x+1, y)
             self.spawn_piece(array, self.current_piece[self.angle], self.current_pos, self.current_shape.code)
+            return True
+        return False
 
 
     def right(self, array: list[list[int]]):
@@ -122,11 +124,14 @@ class Move:
 
     def drop(self, array: list[list[int]]):
         '''Move the current piece to the bottommost position it can be moved to.'''
+        counter = 0
         while collision.bottom_is_empty(array):
             self.clear_old_position(array)
             x, y = self.current_pos[0], self.current_pos[1]
             self.current_pos = (x+1, y)
             self.spawn_piece(array, self.current_piece[self.angle], self.current_pos, self.current_shape.code)
+            counter += 1
+        return counter
 
 
     def clear_old_position(self, array: list[list[int]]):

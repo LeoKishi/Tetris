@@ -1,12 +1,8 @@
 from gui import Display
 from movement import Move
 from collision import Collision
-from score import Score
+from points import Points
 import piece
-
-
-
-
 
 
 class Clock:
@@ -16,7 +12,7 @@ class Clock:
 
     def start_timer(self):
         '''Starts the timer. If the timer reaches the limit, the current piece freezes.'''
-        self.timer_stop_id = display.root.after(1000, freeze_and_restart)
+        self.timer_stop_id = display.root.after(1000, freeze)
 
     def stop_timer(self):
         '''Stops the timer if the timer is currently running.'''
@@ -27,7 +23,9 @@ class Clock:
     def start_game_tick(self):
         '''Starts the game tick. Makes the piece move one step downwards for each tick.'''
         if self.game_tick_stop_id is not None:
-            actions('Down')
+            move.down(display.array)
+            display.update_display()
+            freeze_timer()
         self.game_tick_stop_id = display.root.after(500, self.start_game_tick)
 
     def stop_game_tick(self):
@@ -43,7 +41,7 @@ display = Display()
 move = Move()
 collision = Collision()
 choice = piece.Choice()
-score = Score()
+points = Points()
 
 
 # bind user input
@@ -60,8 +58,10 @@ def actions(key: str):
 
         # move piece one step downwards
         case 'Down':
-            move.down(display.array)
-            display.update_display()
+            if move.down(display.array):
+                display.update_display()
+                points.score += 1
+                display.score_var.set(points.score)
 
         # move piece one step to the right
         case 'Right':
@@ -75,8 +75,10 @@ def actions(key: str):
 
         # drop piece
         case 'space':
-            move.drop(display.array)
-            freeze_and_restart()
+            count = move.drop(display.array)
+            points.score += count*2
+            display.score_var.set(points.score)
+            freeze()
             display.update_display()
 
         # hold piece
@@ -95,11 +97,11 @@ def actions(key: str):
                 display.load_queue(choice.queue)
                 move.can_store_piece = False
             
-    
-    # show game array in terminal
-    #display.print_grid()
+    freeze_timer()
 
-    # start freeze timer if the piece is on the floor or on top of another piece
+
+def freeze_timer():
+    '''Starts the freeze timer if the piece is on the floor or on top of another piece'''
     if not collision.bottom_is_empty(display.array):
         if clock.timer_stop_id is None:
             clock.start_timer()
@@ -107,12 +109,15 @@ def actions(key: str):
         clock.stop_timer()
 
 
-def freeze_and_restart():
+def freeze():
     '''Freezes the current piece, checks for completed lines and spawn the next piece.'''
     clock.stop_game_tick()
     move.freeze_piece(display.array)
-    if lines := score.search_completed_lines(display.array):
-        score.clear_and_collapse(display.array, lines)
+    if lines := points.search_completed_lines(display.array):
+        points.clear_and_collapse(display.array, lines)
+        points.score += points.get_points(lines)
+        display.lines_var.set(points.lines)
+        display.score_var.set(points.score)
     move.new_piece(display.array, choice.dequeue())
     display.load_queue(choice.queue)
     display.update_display()

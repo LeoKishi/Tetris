@@ -143,10 +143,34 @@ class Display:
                                    relief=tk.RIDGE,
                                    bg='#3f3845',
                                    pady=(5))
-        
+
+        self.lines_var = tk.StringVar()
+        self.lines_var.set(0)
+
         self.lines_value_label = tk.Label(self.left_side_frame,
-                                   text='0',
+                                   textvariable=self.lines_var,
+                                   font=('Calibri', 15, 'bold'),
+                                   fg='white',
+                                   borderwidth=5,
+                                   relief=tk.SUNKEN,
+                                   bg='#1a1a1a',
+                                   pady=(5))
+
+        self.score_header_label = tk.Label(self.left_side_frame,
+                                   text='SCORE',
                                    font=('Calibri', 20, 'bold'),
+                                   fg='white',
+                                   borderwidth=3,
+                                   relief=tk.RIDGE,
+                                   bg='#3f3845',
+                                   pady=(5))
+        
+        self.score_var = tk.StringVar()
+        self.score_var.set(0)
+
+        self.score_value_label = tk.Label(self.left_side_frame,
+                                   textvariable=self.score_var,
+                                   font=('Calibri', 15, 'bold'),
                                    fg='white',
                                    borderwidth=5,
                                    relief=tk.SUNKEN,
@@ -214,6 +238,10 @@ class Display:
         # line counter
         self.lines_header_label.pack(side=tk.TOP, padx=(20,0), pady=(100,0), fill='x')
         self.lines_value_label.pack(side=tk.TOP, padx=(20,0), pady=(10,0), fill='x')
+
+        # score counter
+        self.score_header_label.pack(side=tk.TOP, padx=(20,0), pady=(40,0), fill='x')
+        self.score_value_label.pack(side=tk.TOP, padx=(20,0), pady=(10,0), fill='x')
 
 
         # right side ////////////////////
