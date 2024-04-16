@@ -136,6 +136,8 @@ def freeze():
     if collision.top_out(display.array):
         move.topped_out = True
 
+        display.root.unbind('<Key>')
+
         if is_highscore:= points.score > points.get_highscore():
             points.new_highscore(points.score)
 
@@ -146,7 +148,7 @@ def freeze():
 
         reset_values()
 
-        display.root.after(2750, enable_play_again)
+        display.root.after(3200, enable_play_again)
         return
 
     if lines := points.search_completed_lines(display.array):
@@ -203,6 +205,7 @@ def reset_values():
 
 def enable_play_again():
     clock.game_is_paused = True
+    display.root.bind('<Key>', lambda event: actions(event.keysym))
 
 
 

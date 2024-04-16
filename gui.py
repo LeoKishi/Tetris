@@ -46,8 +46,8 @@ class Display:
              'S':'#74d663', # green
              'I':'#63d6cc', # cyan                     
              'J':'#6389d6', # blue
-             'T':'#bb63d6', # purple
-             'W':'white'} 
+             'T':'#bb63d6'} # purple
+
     
     # hex color value for ghost pieces
     ghost_color = {'Z':'#401c1c', # red
@@ -399,8 +399,7 @@ class Display:
         '''Paints the squares white.'''
         for pos in line:
             x, y = pos[0], pos[1]
-            self.square[x][y]['bg'] = 'white'
-            self.array[x][y][1] = 'W'
+            self.square[x][y]['bg'] = '#848287'
 
 
     def show_ending_info(self):
