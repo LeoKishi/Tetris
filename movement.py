@@ -53,7 +53,7 @@ class Move:
         rotated_piece = self.current_piece[self.angle]
 
         # place the rotated piece
-        self.spawn_piece(array, rotated_piece, self.current_pos, self.current_shape.color_code)
+        self.spawn_piece(array, rotated_piece, self.current_pos, self.current_shape.code)
         
 
     def side_bounds_wall_kick(self, array: list[list[int]], piece: list[list[int]]):
@@ -98,7 +98,7 @@ class Move:
             self.clear_old_position(array)
             x, y = self.current_pos[0], self.current_pos[1]
             self.current_pos = (x+1, y)
-            self.spawn_piece(array, self.current_piece[self.angle], self.current_pos, self.current_shape.color_code)
+            self.spawn_piece(array, self.current_piece[self.angle], self.current_pos, self.current_shape.code)
 
 
     def right(self, array: list[list[int]]):
@@ -107,7 +107,7 @@ class Move:
             self.clear_old_position(array)
             x, y = self.current_pos[0], self.current_pos[1]
             self.current_pos = (x, y+1)
-            self.spawn_piece(array, self.current_piece[self.angle], self.current_pos, self.current_shape.color_code)
+            self.spawn_piece(array, self.current_piece[self.angle], self.current_pos, self.current_shape.code)
 
 
     def left(self, array: list[list[int]]):
@@ -116,7 +116,7 @@ class Move:
             self.clear_old_position(array)
             x, y = self.current_pos[0], self.current_pos[1]
             self.current_pos = (x, y-1)
-            self.spawn_piece(array, self.current_piece[self.angle], self.current_pos, self.current_shape.color_code)
+            self.spawn_piece(array, self.current_piece[self.angle], self.current_pos, self.current_shape.code)
 
 
     def drop(self, array: list[list[int]]):
@@ -125,7 +125,7 @@ class Move:
             self.clear_old_position(array)
             x, y = self.current_pos[0], self.current_pos[1]
             self.current_pos = (x+1, y)
-            self.spawn_piece(array, self.current_piece[self.angle], self.current_pos, self.current_shape.color_code)
+            self.spawn_piece(array, self.current_piece[self.angle], self.current_pos, self.current_shape.code)
 
 
     def clear_old_position(self, array: list[list[int]]):
@@ -175,7 +175,7 @@ class Move:
         self.current_piece = shape.rotation
         self.current_pos = position
 
-        self.spawn_piece(array, self.current_piece[self.angle], self.current_pos, shape.color_code)
+        self.spawn_piece(array, self.current_piece[self.angle], self.current_pos, shape.code)
 
 
 

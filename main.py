@@ -87,8 +87,7 @@ def actions(key: str):
     # show game array in terminal
     #display.print_grid()
 
-    # check if the piece is on the floor or on top of another piece
-        # start/stop the piece freeze timer
+    # start freeze timer if the piece is on the floor or on top of another piece
     if not collision.bottom_is_empty(display.array):
         if clock.timer_stop_id is None:
             clock.start_timer()
@@ -99,20 +98,19 @@ def actions(key: str):
 def freeze():
     '''Freezes the current piece and spawns the next one. Resets the game tick.'''
     clock.stop_game_tick()
+
     move.freeze_piece(display.array)
-
     clear_lines()
-
     move.new_piece(display.array, (0,3), bag.get_piece())
-    clock.start_game_tick()
-
     display.update_display()
+
+    clock.start_game_tick()
 
 
 def clear_lines():
-    '''Checks if there are completed lines. Clears the completed lines if there are any.'''
+    '''Checks if there are completed lines. Clears the completed lines if there are any and collapses the stack.'''
     if lines := score.search_completed_lines(display.array):
-        score.erase_line(display.array, lines)
+        score.clear_and_collapse(display.array, lines)
 
 
 

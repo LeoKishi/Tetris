@@ -18,7 +18,7 @@ class Tshape:
                  [1,1,0],
                  [0,1,0]]]
     
-    color_code = 'T'
+    code = 'T'
 
 
 class Sshape:
@@ -38,7 +38,7 @@ class Sshape:
                  [1,1,0],
                  [0,1,0]]]
 
-    color_code = 'S'
+    code = 'S'
 
 
 class Zshape:
@@ -58,7 +58,7 @@ class Zshape:
                  [1,1,0],
                  [1,0,0]]]
     
-    color_code = 'Z'
+    code = 'Z'
 
 
 class Lshape:
@@ -78,7 +78,7 @@ class Lshape:
                  [0,1,0],
                  [0,1,0]]]
     
-    color_code = 'L'
+    code = 'L'
 
 
 class Jshape:
@@ -98,7 +98,7 @@ class Jshape:
                  [0,1,0],
                  [0,1,0]]]
 
-    color_code = 'J'
+    code = 'J'
 
 
 class Oshape:
@@ -118,7 +118,7 @@ class Oshape:
                  [0,1,1,0],
                  [0,0,0,0]]]
     
-    color_code = 'O'
+    code = 'O'
 
 
 class Ishape:
@@ -142,7 +142,7 @@ class Ishape:
                  [0,1,0,0],
                  [0,1,0,0]]]
 
-    color_code = 'I'
+    code = 'I'
 
 
 class PieceBag():

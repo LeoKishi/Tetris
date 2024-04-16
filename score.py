@@ -13,18 +13,12 @@ class Score:
         return completed_lines
 
 
-    def erase_line(self, array: list[list[int]], completed_lines: list[int]):
-        '''Resets the lines from the given indices in the array.'''
+    def clear_and_collapse(self, array: list[list[int]], completed_lines: list[int]):
+        '''Clears the line and drops the line above.'''
         for i in completed_lines:
             array.pop(i)
             array.insert(0, [[0, ' '] for width in range(10)])
 
-
-    def collapse_stack(self, array: list[list[int]], index: int):
-        '''Drops the lines above the given index to the bottommost position they can be moved to.'''
-
-
-        ...
 
 
 
