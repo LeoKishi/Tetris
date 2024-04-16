@@ -32,8 +32,8 @@ class Display:
         self.side_frame.pack(side=tk.RIGHT, padx=(0,20))
 
         # populating 'grid_frame' with small square frames in a grid
-        self.square = [[None for width in range(10)] for height in range(24)]
-        for x in range(24):
+        self.square = [[None for width in range(10)] for height in range(22)]
+        for x in range(22):
             for y in range(10):
                 self.square[x][y] = tk.Frame(self.grid_frame,
                                              height=30,
@@ -44,13 +44,13 @@ class Display:
                 
                 self.square[x][y].grid(row=x, column=y)
 
-        # hide 4x10 space to spawn pieces above screen
-        for x in range(4):
+        # hide 2x10 space to spawn pieces above screen
+        for x in range(2):
             for y in range(10):
                 self.square[x][y].grid_forget()
 
         # 2D array to represent the game grid
-        self.array = [[[0, ' '] for width in range(10)] for height in range(24)]
+        self.array = [[[0, ' '] for width in range(10)] for height in range(22)]
 
         # hex color value for each piece
         self.color = {'T':'#c384d1',
@@ -71,7 +71,7 @@ class Display:
         '''
         print()
         for i, j in enumerate(self.array):
-            if i == 4:
+            if i == 2:
                 print()
             print(j)
         print()
@@ -79,7 +79,7 @@ class Display:
 
     def update_display(self):
         '''Draws the game grid based on the values for each position in the array.'''
-        for x in range(24):
+        for x in range(22):
             for y in range(10):
                 if self.array[x][y][0] == 0:
                     self.square[x][y].config(bg='#1a1a1a',
@@ -93,7 +93,7 @@ class Display:
 
     def reset_game(self):
         '''Erases everything from the array and updates the display.'''
-        self.array = [[0 for width in range(10)] for height in range(24)]
+        self.array = [[0 for width in range(10)] for height in range(22)]
         self.update_display()
                     
     

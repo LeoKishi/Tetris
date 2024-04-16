@@ -11,7 +11,7 @@ class Clock:
 
     def start_timer(self):
         '''Starts the timer'''
-        self.timer_stop_id = display.root.after(2000, freeze)
+        self.timer_stop_id = display.root.after(1000, freeze)
 
     def stop_timer(self):
         '''Stops the timer if the timer is currently running.'''
@@ -90,7 +90,7 @@ def freeze():
     clock.stop_game_tick()
     move.freeze_piece(display.array)
 
-    move.new_piece(display.array, (5,5), piece.Tshape)
+    move.new_piece(display.array, (0,3), piece.Tshape)
     display.update_display()
     clock.start_game_tick()
 
@@ -98,7 +98,7 @@ def freeze():
 if __name__ == '__main__':
     #display.array[10][3][0] = 2
 
-    move.new_piece(display.array, (5,5), piece.Tshape)
+    move.new_piece(display.array, (0,3), piece.Tshape)
 
     clock.start_game_tick()
 

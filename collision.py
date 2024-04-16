@@ -6,7 +6,7 @@ class Collision:
         positions = self.get_positions(array)
         for pos in positions:
             x, y = pos[0], pos[1]
-            if x+1 >= 24 or array[x+1][y][0] == 2:
+            if x+1 >= 22 or array[x+1][y][0] == 2:
                 return False
         return True
 
@@ -34,7 +34,7 @@ class Collision:
     def get_positions(self, array: list[list[int]]) -> list[tuple[int, int]]:
         '''Returns the position of every square that make up the piece.'''
         positions = []
-        for x in range(24):
+        for x in range(22):
             for y in range(10):
                 if array[x][y][0] == 1:
                     positions.append((x,y))
@@ -82,7 +82,7 @@ class Collision:
             for j in range(width):
                 if not self.in_bounds(x=x+i) and piece[i][j] == 1:
                     return False
-                elif  self.in_bounds(x=x+i, y=y+j) and array[x+i][y+j][0] == 2 and piece[i][j] == 1:
+                elif self.in_bounds(x=x+i, y=y+j) and array[x+i][y+j][0] == 2 and piece[i][j] == 1:
                     return False
         return True
 
@@ -116,13 +116,13 @@ class Collision:
     def in_bounds(self, x=False, y=False) -> bool:
         '''Checks if x and/or y is inside bounds.'''
         if y is False:
-            if x >= 0 and x < 24:
+            if x >= 0 and x < 22:
                 return True
         elif x is False:
             if y >= 0 and y < 10:
                 return True
         else:
-            if (x >= 0 and x < 24) and (y >= 0 and y < 10):
+            if (x >= 0 and x < 22) and (y >= 0 and y < 10):
                 return True
 
 

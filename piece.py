@@ -15,7 +15,7 @@ class Tshape:
                  [1,1,0],
                  [0,1,0]]]
     
-    color = 'T'
+    color_code = 'T'
 
 
 class Sshape:
@@ -35,7 +35,7 @@ class Sshape:
                  [1,1,0],
                  [0,1,0]]]
 
-    color = 'S'
+    color_code = 'S'
 
 
 class Zshape:
@@ -55,7 +55,7 @@ class Zshape:
                  [1,1,0],
                  [1,0,0]]]
     
-    color = 'Z'
+    color_code = 'Z'
 
 
 class Lshape:
@@ -75,7 +75,7 @@ class Lshape:
                  [0,1,0],
                  [0,1,0]]]
     
-    color = 'L'
+    color_code = 'L'
 
 
 class Jshape:
@@ -95,7 +95,7 @@ class Jshape:
                  [0,1,0],
                  [0,1,0]]]
 
-    color = 'J'
+    color_code = 'J'
 
 
 class Oshape:
@@ -115,7 +115,7 @@ class Oshape:
                  [0,1,1,0],
                  [0,0,0,0]]]
     
-    color = 'O'
+    color_code = 'O'
 
 
 class Ishape:
@@ -139,7 +139,7 @@ class Ishape:
                  [0,1,0,0],
                  [0,1,0,0]]]
 
-    color = 'I'
+    color_code = 'I'
 
 
 
