@@ -10,6 +10,7 @@ class Move:
     angle = None
     current_pos = None
     stored_piece = None
+    can_store_piece = True
 
 
     def rotate(self, array: list[list[int]]):
@@ -159,7 +160,7 @@ class Move:
             array[x][y][0] = 2
 
 
-    def new_piece(self, array: list[list[int]], position: tuple[int, int], shape):
+    def new_piece(self, array: list[list[int]], shape):
         '''
         Define a new piece to be spawned.\n
         Arguments
@@ -173,9 +174,17 @@ class Move:
         self.current_shape = shape
         self.angle = 0
         self.current_piece = shape.rotation
-        self.current_pos = position
+        self.current_pos = (0,3)
 
         self.spawn_piece(array, self.current_piece[self.angle], self.current_pos, shape.code)
+
+
+    def hold_piece(self, array: list[list[int]]):
+        '''Stores the current piece and erase it from the array.'''
+        self.stored_piece = self.current_shape
+        self.clear_old_position(array)
+
+
 
 
 

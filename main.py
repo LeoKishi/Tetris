@@ -16,7 +16,7 @@ class Clock:
 
     def start_timer(self):
         '''Starts the timer. If the timer reaches the limit, the current piece freezes.'''
-        self.timer_stop_id = display.root.after(1000, freeze)
+        self.timer_stop_id = display.root.after(1000, freeze_and_restart)
 
     def stop_timer(self):
         '''Stops the timer if the timer is currently running.'''
@@ -42,7 +42,7 @@ clock = Clock()
 display = Display()
 move = Move()
 collision = Collision()
-bag = piece.PieceBag()
+choice = piece.Choice()
 score = Score()
 
 
@@ -76,13 +76,25 @@ def actions(key: str):
         # drop piece
         case 'space':
             move.drop(display.array)
-            freeze()
+            freeze_and_restart()
             display.update_display()
 
         # hold piece
         case 'c':
-            print('c')
-            ...
+            if move.can_store_piece:
+                if move.stored_piece is not None:
+                    stored_piece = move.stored_piece
+                    move.hold_piece(display.array)
+                    move.new_piece(display.array, stored_piece)
+                elif move.stored_piece is None:
+                    move.hold_piece(display.array)
+                    move.new_piece(display.array, choice.dequeue())
+
+                display.update_display()
+                display.load_stored_piece(move.stored_piece)
+                display.load_queue(choice.queue)
+                move.can_store_piece = False
+            
     
     # show game array in terminal
     #display.print_grid()
@@ -95,22 +107,27 @@ def actions(key: str):
         clock.stop_timer()
 
 
-def freeze():
-    '''Freezes the current piece and spawns the next one. Resets the game tick.'''
+def freeze_and_restart():
+    '''Freezes the current piece, checks for completed lines and spawn the next piece.'''
     clock.stop_game_tick()
-
     move.freeze_piece(display.array)
-    clear_lines()
-    move.new_piece(display.array, (0,3), bag.get_piece())
-    display.update_display()
-
-    clock.start_game_tick()
-
-
-def clear_lines():
-    '''Checks if there are completed lines. Clears the completed lines if there are any and collapses the stack.'''
     if lines := score.search_completed_lines(display.array):
         score.clear_and_collapse(display.array, lines)
+    move.new_piece(display.array, choice.dequeue())
+    display.load_queue(choice.queue)
+    display.update_display()
+    clock.start_game_tick()
+    move.can_store_piece = True
+
+
+def start_game():
+    '''Loads the queue, spawns a new piece and starts the game tick clock.'''
+    choice.reset_queue()
+    move.new_piece(display.array, choice.dequeue())
+    display.load_queue(choice.queue)
+    display.update_display()
+    clock.start_game_tick()
+
 
 
 
@@ -118,12 +135,7 @@ def clear_lines():
 
 
 if __name__ == '__main__':
-    #display.array[10][3][0] = 2
-
-    move.new_piece(display.array, (0,3), bag.get_piece())
-    display.update_display()
-
-    clock.start_game_tick()
+    start_game()
 
     
 

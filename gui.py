@@ -16,8 +16,6 @@ class Display:
         self.load_images()
         self.pack_widgets()
 
-
-
         
         # populating 'grid_frame' with small square frames in a grid
         self.square = [[None for width in range(10)] for height in range(22)]
@@ -211,6 +209,7 @@ class Display:
         self.hold_label.pack(side=tk.TOP, padx=(20,0), pady=(20,0), anchor=tk.N, fill='x')
         self.hold_frame.pack(side=tk.TOP, padx=(20,0), pady=(10,0))
         self.hold_frame.pack_propagate(0)
+        self.hold_image.pack()
 
         # line counter
         self.lines_header_label.pack(side=tk.TOP, padx=(20,0), pady=(100,0), fill='x')
@@ -224,14 +223,35 @@ class Display:
         self.next_label.pack(side=tk.TOP, padx=(0,20), pady=(20,0), anchor=tk.N, fill='x')
         self.next_frame.pack(side=tk.TOP, padx=(0,20), pady=(10,20))
         self.next_frame.pack_propagate(0)
+        self.next_image.pack()
 
         # queue
         self.queue_frame.pack(side=tk.TOP, padx=(0,20), pady=(0,20))
         self.queue_frame.pack_propagate(0)
+        self.queue1_image.pack()
+        self.queue2_image.pack()
+        self.queue3_image.pack()
 
 
         # game grid /////////////////////
         self.grid_frame.pack(side=tk.LEFT, padx=(20,20), pady=(20,20))
+
+
+    def load_queue(self, queue: list[object]):
+        self.next_image['image'] = self.image[queue[0].code]
+        self.queue1_image['image'] = self.image[queue[1].code]
+        self.queue2_image['image'] = self.image[queue[2].code]
+        self.queue3_image['image'] = self.image[queue[3].code]
+
+
+    def load_stored_piece(self, stored_piece: object):
+        self.hold_image['image'] = self.image[stored_piece.code]
+
+
+
+
+
+
 
 
 if __name__ == '__main__':
