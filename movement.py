@@ -11,7 +11,7 @@ class Move:
     current_pos = None
     stored_piece = None
     can_store_piece = True
-    topped_out = False
+    topped_out = True
 
 
     def rotate(self, array: list[list[int]]):

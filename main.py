@@ -14,7 +14,7 @@ class Clock:
     # game tick speed
     speed = 720
 
-    game_is_paused = False
+    game_is_paused = True
 
     def start_timer(self):
         '''Starts the timer. If the timer reaches the limit, the current piece freezes.'''
@@ -115,7 +115,8 @@ def actions(key: str):
     elif key == 'space' and clock.game_is_paused:
         move.topped_out = False
         start_game()
-        display.hide_ending_info()
+        display.show_game_grid()
+        display.start_game_label.destroy()
 
 
 def freeze_timer():
@@ -207,11 +208,7 @@ def enable_play_again():
 
 if __name__ == '__main__':
 
-    start_game()    
 
 
 
-
-
-
-display.root.mainloop()
+    display.root.mainloop()

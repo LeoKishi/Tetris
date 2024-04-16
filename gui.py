@@ -261,6 +261,13 @@ class Display:
                                         fg='white',
                                         bg='#1a1a1a',
                                         pady=(5))
+        
+        self.start_game_label = tk.Label(self.ending_frame,
+                                        text='PRESS SPACE TO START',
+                                        font=('Calibri', 12),
+                                        fg='white',
+                                        bg='#1a1a1a',
+                                        pady=(5))
 
 
     def load_images(self):
@@ -337,9 +344,11 @@ class Display:
         self.queue3_image.pack()
 
 
-        # game grid /////////////////////
-        self.grid_frame.pack(side=tk.LEFT, padx=(20,20), pady=(20,20))
-        self.grid_frame.pack_propagate(0)
+        # middle /////////////////////
+        self.ending_frame.pack(padx=(20,20), pady=(20,20))
+        self.ending_frame.pack_propagate(0)
+
+        self.start_game_label.pack(pady=(280,0))
 
 
     def load_queue(self, queue: list[object]):
@@ -383,7 +392,7 @@ class Display:
                 time += 50
                 self.root.after(time, self.paint_white, line)
         self.root.after(time + 1200, self.reset_game)
-        self.root.after(time + 2000, self.show_ending_info)
+        self.root.after(time + 1900, self.show_ending_info)
 
 
     def paint_white(self, line):
@@ -420,7 +429,7 @@ class Display:
         self.play_again_label.pack(pady=(70,0))
 
 
-    def hide_ending_info(self):
+    def show_game_grid(self):
         '''Hides the game over screen.'''
         self.ending_frame.pack_forget()
 
@@ -451,7 +460,6 @@ class Display:
 
 
 if __name__ == '__main__':
-    import winsound
 
     display = Display()
 
