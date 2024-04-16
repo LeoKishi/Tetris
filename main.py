@@ -1,8 +1,12 @@
 from gui import Display
 from movement import Move
 from collision import Collision
+from score import Score
 import piece
-import random
+
+
+
+
 
 
 class Clock:
@@ -33,11 +37,14 @@ class Clock:
             self.game_tick_stop_id = None
 
 
+# class instances
+clock = Clock()
 display = Display()
 move = Move()
 collision = Collision()
-clock = Clock()
 bag = piece.PieceBag()
+score = Score()
+
 
 # bind user input
 display.root.bind('<Key>', lambda event: actions(event.keysym))
@@ -77,7 +84,8 @@ def actions(key: str):
             print('c')
             ...
     
-    display.print_grid()
+    # show game array in terminal
+    #display.print_grid()
 
     # check if the piece is on the floor or on top of another piece
         # start/stop the piece freeze timer
@@ -93,9 +101,19 @@ def freeze():
     clock.stop_game_tick()
     move.freeze_piece(display.array)
 
+    clear_lines()
+
     move.new_piece(display.array, (0,3), bag.get_piece())
-    display.update_display()
     clock.start_game_tick()
+
+    display.update_display()
+
+
+def clear_lines():
+    '''Checks if there are completed lines. Clears the completed lines if there are any.'''
+    if lines := score.search_completed_lines(display.array):
+        score.erase_line(display.array, lines)
+
 
 
 
@@ -105,11 +123,11 @@ if __name__ == '__main__':
     #display.array[10][3][0] = 2
 
     move.new_piece(display.array, (0,3), bag.get_piece())
+    display.update_display()
 
     clock.start_game_tick()
 
-    display.print_grid()
-    display.update_display()
+    
 
 
 
