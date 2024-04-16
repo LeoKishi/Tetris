@@ -13,6 +13,8 @@ class Clock:
     # game tick speed
     speed = 720
 
+    game_is_paused = False
+
     def start_timer(self):
         '''Starts the timer. If the timer reaches the limit, the current piece freezes.'''
         self.timer_stop_id = display.root.after(1000, freeze)
@@ -79,11 +81,13 @@ def actions(key: str):
 
             # drop piece
             case 'space':
+                clock.stop_timer()
                 count = move.drop(display.array)
                 points.score += count*2
                 display.score_var.set(points.score)
                 freeze()
                 display.update_display()
+                return
 
             # hold piece
             case 'c':
@@ -100,8 +104,13 @@ def actions(key: str):
                     display.load_stored_piece(move.stored_piece)
                     display.load_queue(choice.queue)
                     move.can_store_piece = False
-                
+
         freeze_timer()
+
+    elif key == 'space' and clock.game_is_paused:
+        move.topped_out = False
+        start_game()
+        display.hide_ending_info()
 
 
 def freeze_timer():
@@ -119,9 +128,10 @@ def freeze():
     move.freeze_piece(display.array)
 
     if collision.top_out(display.array):
-        move.clear(display.array)
         move.topped_out = True
-        display.ending_animation()
+        display.ending_animation(lines=points.lines, score=points.score)
+        reset_values()
+        display.root.after(2750, enable_play_again)
         return
 
     if lines := points.search_completed_lines(display.array):
@@ -143,20 +153,30 @@ def freeze():
 
 def start_game():
     '''Loads the queue, spawns a new piece and starts the game tick clock.'''
-    choice.reset_queue()
+    choice.fill_queue()
     move.new_piece(display.array, choice.dequeue())
     display.load_queue(choice.queue)
     display.update_display()
     clock.start_game_tick()
+    clock.game_is_paused = False
 
     
 def set_game_speed():
     '''Speeds up the game tick as the game progresses.'''
     if clock.speed > 150:
         clock.speed = 720 - (70*points.level)
-    elif clock.speed > 40:
+    elif clock.speed > 30:
         clock.speed -= 10
 
+
+def reset_values():
+    move.clear(display.array)
+    points.clear()
+    choice.clear()
+
+
+def enable_play_again():
+    clock.game_is_paused = True
 
 
 

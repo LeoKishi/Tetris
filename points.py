@@ -47,6 +47,11 @@ class Points:
             return four_lines
 
 
+    def clear(self):
+        self.lines = 0
+        self.level = 0
+        self.score = 0
+
 
 
 if __name__ == '__main__':

@@ -176,10 +176,9 @@ class Choice():
         return shape
 
 
-    def reset_queue(self):
+    def clear(self):
         self.pool = []
         self.queue = []
-        self.fill_queue()
 
 
 

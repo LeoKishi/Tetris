@@ -33,18 +33,18 @@ class Display:
             for y in range(10):
                 self.square[x][y].grid_forget()
 
-        # 2D array to represent the game grid
-        self.array = [[[0, ' '] for width in range(10)] for height in range(22)]
+    # 2D array to represent the game grid
+    array = [[[0, ' '] for width in range(10)] for height in range(22)]
 
-        # hex color value for each piece
-        self.color = {'Z':'#d66363', # red
-                      'L':'#d6a463', # orange
-                      'O':'#d4d663', # yellow
-                      'S':'#74d663', # green
-                      'I':'#63d6cc', # cyan                     
-                      'J':'#6389d6', # blue
-                      'T':'#bb63d6', # purple
-                      'W':'white'} 
+    # hex color value for each piece
+    color = {'Z':'#d66363', # red
+             'L':'#d6a463', # orange
+             'O':'#d4d663', # yellow
+             'S':'#74d663', # green
+             'I':'#63d6cc', # cyan                     
+             'J':'#6389d6', # blue
+             'T':'#bb63d6', # purple
+             'W':'white'} 
     
     
     def print_grid(self):
@@ -78,7 +78,7 @@ class Display:
 
     def reset_game(self):
         '''Erases everything from the array and updates the display.'''
-        self.array = [[0 for width in range(10)] for height in range(22)]
+        self.array = [[[0, ' '] for width in range(10)] for height in range(22)]
         self.update_display()
                     
 
@@ -100,7 +100,7 @@ class Display:
 
         # right //////////////////
         self.right_side_frame = tk.Frame(self.main_window,
-                                   bg='#2d2a30')
+                                        bg='#2d2a30')
 
         self.queue_frame = tk.Frame(self.right_side_frame,
                                    height=300,
@@ -117,10 +117,23 @@ class Display:
                                    bg='#1a1a1a')
 
 
-        # game grid //////////////
+        # middle //////////////
         self.grid_frame = tk.Frame(self.main_window,
+                                   height=660,
+                                   width=300,
                                    borderwidth=3,
-                                   relief=tk.SUNKEN)
+                                   relief=tk.SUNKEN,
+                                   bg='#1a1a1a')
+        
+        self.ending_frame = tk.Frame(self.main_window,
+                                   height=606,
+                                   width=306,
+                                   borderwidth=3,
+                                   relief=tk.SUNKEN,
+                                   bg='#1a1a1a')
+
+        self.info_frame = tk.Frame(self.ending_frame,
+                                   bg='#1a1a1a')
 
 
     def create_labels(self):
@@ -134,46 +147,46 @@ class Display:
                                    pady=(5))
         
         self.lines_header_label = tk.Label(self.left_side_frame,
-                                   text='LINES',
-                                   font=('Calibri', 20, 'bold'),
-                                   fg='white',
-                                   borderwidth=3,
-                                   relief=tk.RIDGE,
-                                   bg='#3f3845',
-                                   pady=(5))
+                                            text='LINES',
+                                            font=('Calibri', 20, 'bold'),
+                                            fg='white',
+                                            borderwidth=3,
+                                            relief=tk.RIDGE,
+                                            bg='#3f3845',
+                                            pady=(5))
 
         self.lines_var = tk.StringVar()
         self.lines_var.set(0)
 
         self.lines_value_label = tk.Label(self.left_side_frame,
-                                   textvariable=self.lines_var,
-                                   font=('Calibri', 15, 'bold'),
-                                   fg='white',
-                                   borderwidth=5,
-                                   relief=tk.SUNKEN,
-                                   bg='#1a1a1a',
-                                   pady=(5))
+                                            textvariable=self.lines_var,
+                                            font=('Calibri', 15, 'bold'),
+                                            fg='white',
+                                            borderwidth=5,
+                                            relief=tk.SUNKEN,
+                                            bg='#1a1a1a',
+                                            pady=(5))
 
         self.score_header_label = tk.Label(self.left_side_frame,
-                                   text='SCORE',
-                                   font=('Calibri', 20, 'bold'),
-                                   fg='white',
-                                   borderwidth=3,
-                                   relief=tk.RIDGE,
-                                   bg='#3f3845',
-                                   pady=(5))
+                                            text='SCORE',
+                                            font=('Calibri', 20, 'bold'),
+                                            fg='white',
+                                            borderwidth=3,
+                                            relief=tk.RIDGE,
+                                            bg='#3f3845',
+                                            pady=(5))
         
         self.score_var = tk.StringVar()
         self.score_var.set(0)
 
         self.score_value_label = tk.Label(self.left_side_frame,
-                                   textvariable=self.score_var,
-                                   font=('Calibri', 15, 'bold'),
-                                   fg='white',
-                                   borderwidth=5,
-                                   relief=tk.SUNKEN,
-                                   bg='#1a1a1a',
-                                   pady=(5))
+                                            textvariable=self.score_var,
+                                            font=('Calibri', 15, 'bold'),
+                                            fg='white',
+                                            borderwidth=5,
+                                            relief=tk.SUNKEN,
+                                            bg='#1a1a1a',
+                                            pady=(5))
 
         self.next_label = tk.Label(self.right_side_frame,
                                    text='NEXT',
@@ -183,6 +196,53 @@ class Display:
                                    relief=tk.RIDGE,
                                    bg='#3f3845',
                                    pady=(5))
+
+        self.ending_lines_header_label = tk.Label(self.info_frame,
+                                                    text='LINES:',
+                                                    font=('Calibri', 12),
+                                                    fg='white',
+                                                    bg='#1a1a1a',
+                                                    pady=(5))
+        
+        self.ending_lines_value_label = tk.Label(self.info_frame,
+                                                    font=('Calibri', 12),
+                                                    fg='white',
+                                                    bg='#1a1a1a',
+                                                    pady=(5))
+
+        self.ending_score_header_label = tk.Label(self.info_frame,
+                                                    text='SCORE:',
+                                                    font=('Calibri', 12),
+                                                    fg='white',
+                                                    bg='#1a1a1a',
+                                                    pady=(5))
+        
+        self.ending_score_value_label = tk.Label(self.info_frame,
+                                                    font=('Calibri', 12),
+                                                    fg='white',
+                                                    bg='#1a1a1a',
+                                                    pady=(5))
+
+        self.ending_highscorescore_header_label = tk.Label(self.info_frame,
+                                                            text='HIGHSCORE:',
+                                                            font=('Calibri', 12),
+                                                            fg='white',
+                                                            bg='#1a1a1a',
+                                                            pady=(5))
+
+        self.ending_highscorescore_value_label = tk.Label(self.info_frame,
+                                                            text='TBD',
+                                                            font=('Calibri', 12),
+                                                            fg='white',
+                                                            bg='#1a1a1a',
+                                                            pady=(5))
+        
+        self.play_again_label = tk.Label(self.info_frame,
+                                        text='PRESS SPACE TO PLAY AGAIN',
+                                        font=('Calibri', 12),
+                                        fg='white',
+                                        bg='#1a1a1a',
+                                        pady=(5))
 
 
     def load_images(self):
@@ -261,6 +321,7 @@ class Display:
 
         # game grid /////////////////////
         self.grid_frame.pack(side=tk.LEFT, padx=(20,20), pady=(20,20))
+        self.grid_frame.pack_propagate(0)
 
 
     def load_queue(self, queue: list[object]):
@@ -276,6 +337,15 @@ class Display:
         self.hold_image['image'] = self.image[stored_piece.code]
 
 
+    def reset_piece_display(self):
+        '''Removes the pieces from the hold and queue display.'''
+        self.next_image['image'] = ''
+        self.queue1_image['image'] = ''
+        self.queue2_image['image'] = ''
+        self.queue3_image['image'] = ''
+        self.hold_image['image'] = ''
+
+
     def get_stack(self) -> list[tuple[int, int]]:
         '''Returns a list with the position of every square of the stack.'''
         stack = []
@@ -287,15 +357,17 @@ class Display:
         return stack
 
 
-    def ending_animation(self):
-        '''Paints the stack with a wave effect.'''
+    def ending_animation(self, lines: int, score: int):
+        '''Paints the stack with a wave effect then erases the grid.'''
         time = 0
         for line in self.get_stack():
             if line:
                 time += 50
                 self.root.after(time, self.paint_white, line)
-        self.root.after(time, self.sweep_stack)
-        
+        self.root.after(time + 1200, self.reset_game)
+        self.root.after(time + 2000, self.show_ending_info, lines, score)
+
+
 
     def paint_white(self, line):
         '''Paints the squares white.'''
@@ -305,32 +377,46 @@ class Display:
             self.array[x][y][1] = 'W'
 
 
-    def sweep_stack(self):
-        '''Pops the lines in sequence.'''
-        time = 200
-        for i in range(22):
-            time += 150
-            #print(time)
-            self.root.after(time, self.pop_line)
+    def show_ending_info(self, lines: int, score: int):
+        self.reset_piece_display()
+        self.lines_var.set(0)
+        self.score_var.set(0)
+
+        self.ending_frame.pack(padx=(20,20), pady=(20,20))
+        self.ending_frame.pack_propagate(0)
+
+        self.grid_frame.pack_forget()
+
+        self.info_frame.pack(fill='x', pady=(150,0))
+
+        self.ending_lines_header_label.pack()
+        self.ending_lines_value_label['text'] = lines
+        self.ending_lines_value_label.pack()
+
+        self.ending_score_header_label.pack(pady=(20,0))
+        self.ending_score_value_label['text'] = score
+        self.ending_score_value_label.pack()
+
+        self.ending_highscorescore_header_label.pack(pady=(60,0))
+        self.ending_highscorescore_value_label.pack()
+
+        self.play_again_label.pack(pady=(100,0))
 
 
-    def pop_line(self):
-        '''Pops the bottommost line.'''
-        self.array.pop()
-        self.array.insert(0, [[0, ' '] for width in range(10)])
-        self.update_display()
+    def hide_ending_info(self):
+        self.ending_frame.pack_forget()
+
+        self.grid_frame.pack(side=tk.LEFT, padx=(20,20), pady=(20,20))
+        self.grid_frame.pack_propagate(0)
 
 
 
 if __name__ == '__main__':
     display = Display()
 
-    display.sweep_stack()
+   
+    
 
 
 
-
-
-
-
-    #display.root.mainloop()
+    display.root.mainloop()
