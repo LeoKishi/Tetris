@@ -6,7 +6,7 @@ class Collision:
         positions = self.get_positions(array)
         for pos in positions:
             x, y = pos[0], pos[1]
-            if x+1 >= 22 or array[x+1][y][0] == 2:
+            if not self.in_bounds(x=x+1) or array[x+1][y][0] == 2:
                 return False
         return True
 
@@ -16,7 +16,7 @@ class Collision:
         positions = self.get_positions(array)
         for pos in positions:
             x, y = pos[0], pos[1]
-            if y+1 >= 10 or array[x][y+1][0] == 2:
+            if not self.in_bounds(y=y+1) or array[x][y+1][0] == 2:
                 return False
         return True
 
@@ -26,7 +26,7 @@ class Collision:
         positions = self.get_positions(array)
         for pos in positions:
             x, y = pos[0], pos[1]
-            if y-1 < 0 or array[x][y-1][0] == 2:
+            if not self.in_bounds(y=y-1) or array[x][y-1][0] == 2:
                 return False
         return True
 
@@ -69,7 +69,7 @@ class Collision:
         x, y = pos[0], pos[1]
         for i in range(height):
             for j in range(width):
-                if array[x+i][y+j][0] == 2 and piece[i][j] == 1:
+                if self.in_bounds(x+i, y+j) and array[x+i][y+j][0] == 2 and piece[i][j] == 1:
                     return True
         return False
     
@@ -82,7 +82,7 @@ class Collision:
             for j in range(width):
                 if not self.in_bounds(x=x+i) and piece[i][j] == 1:
                     return False
-                elif self.in_bounds(x=x+i, y=y+j) and array[x+i][y+j][0] == 2 and piece[i][j] == 1:
+                elif self.in_bounds(x+i, y+j) and array[x+i][y+j][0] == 2 and piece[i][j] == 1:
                     return False
         return True
 
@@ -95,7 +95,7 @@ class Collision:
             for j in range(width):
                 if not self.in_bounds(y=y+j) and piece[i][j] == 1:
                     return False
-                elif self.in_bounds(x=x+i, y=y+j) and array[x+i][y+j][0] == 2 and piece[i][j] == 1:
+                elif self.in_bounds(x+i, y+j) and array[x+i][y+j][0] == 2 and piece[i][j] == 1:
                     return False
         return True
 
@@ -108,7 +108,7 @@ class Collision:
             for j in range(width):
                 if not self.in_bounds(y=y+j) and piece[i][j] == 1:
                     return False
-                elif self.in_bounds(x=x+i, y=y+j) and array[x+i][y+j][0] == 2 and piece[i][j] == 1:
+                elif self.in_bounds(x+i, y+j) and array[x+i][y+j][0] == 2 and piece[i][j] == 1:
                     return False
         return True
 
@@ -121,19 +121,21 @@ class Collision:
             for j in range(width):
                 if not self.in_bounds(x=x+i) and piece[i][j] == 1:
                     return False
-                elif self.in_bounds(x=x+i, y=y+j) and array[x+i][y+j][0] == 2 and piece[i][j] == 1:
+                elif self.in_bounds(x+i, y+j) and array[x+i][y+j][0] == 2 and piece[i][j] == 1:
                     return False
         return True
 
 
     def in_bounds(self, x=False, y=False) -> bool:
         '''Checks if x and/or y is inside bounds.'''
-        if y is False:
+        if not y:
             if x >= 0 and x < 22:
                 return True
-        elif x is False:
+            
+        elif not x:
             if y >= 0 and y < 10:
                 return True
+            
         else:
             if (x >= 0 and x < 22) and (y >= 0 and y < 10):
                 return True

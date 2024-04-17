@@ -153,7 +153,7 @@ class Move:
         x, y = pos[0], pos[1]
         for i in range(height):
             for j in range(width):
-                if x+i < 22 and y+j < 10 and array[x+i][y+j][0] == 0 and piece[i][j] == 1:
+                if collision.in_bounds(x+i, y+j) and array[x+i][y+j][0] == 0 and piece[i][j] == 1:
                     array[x+i][y+j][0] = 1
                     array[x+i][y+j][1] = color
 
@@ -203,7 +203,7 @@ class Move:
 
 
     def find_ghost_position(self, array: list[list[int]]) -> tuple[int, int]:
-        '''Find the bottommost position the piece can be moved to.'''
+        '''Returns the bottommost position the piece can be moved to.'''
         counter = 0
         x, y = self.current_pos[0], self.current_pos[1]
 
@@ -214,7 +214,7 @@ class Move:
 
 
     def get_ghost_piece(self, array: list[list[int]]):
-        '''Returns True if the piece can be moved left by the specified amount of steps, returns False otherwise.'''
+        '''Returns the positions of every square that forms the ghost piece.'''
         piece = self.current_piece[self.angle]
         width, height = len(piece[0]), len(piece)
 
@@ -225,7 +225,7 @@ class Move:
 
         for i in range(height):
             for j in range(width):
-                if collision.in_bounds(x=x+i, y=y+j) and array[x+i][y+j][0] == 0 and piece[i][j] == 1:
+                if collision.in_bounds(x+i, y+j) and array[x+i][y+j][0] == 0 and piece[i][j] == 1:
                     positions.append((x+i, y+j))
 
         return positions

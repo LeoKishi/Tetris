@@ -71,13 +71,6 @@ class Points:
 
 
 if __name__ == '__main__':
-    score = Points()
-
-    score.get_highscore()
-
-    score.new_highscore(10000)
-
-    score.get_highscore()
 
 
     ...

@@ -83,7 +83,7 @@ def actions(key: str):
 
             # drop piece
             case 'space':
-                playsound('assets/click.wav', block=False)
+                playsound('assets/drop.wav', block=False)
                 clock.stop_timer()
                 count = move.drop(display.array)
                 points.score += count*2
