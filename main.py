@@ -33,6 +33,7 @@ class Clock:
             display.update_display()
             freeze_timer()
             display.ghost_piece(move.get_ghost_piece(display.array), move.current_shape.code)
+            
         self.game_tick_stop_id = display.root.after(self.speed, self.start_game_tick)
 
     def stop_game_tick(self):
@@ -112,6 +113,7 @@ def actions(key: str):
         freeze_timer()
         display.ghost_piece(move.get_ghost_piece(display.array), move.current_shape.code)
 
+    # during game over screen
     elif key == 'space' and clock.game_is_paused:
         move.topped_out = False
         start_game()
@@ -129,29 +131,63 @@ def freeze_timer():
 
 
 def freeze():
-    '''Freezes the current piece, checks for completed lines and spawn the next piece.'''
+    '''Freezes the current piece, checks for top out and completed lines then spawn the next piece.'''
     clock.stop_game_tick()
     move.freeze_piece(display.array)
 
+    if check_top_out():
+        return
+
+    check_lines()
+
+    move.new_piece(display.array, choice.dequeue())
+
+    display.load_queue(choice.queue)
+    display.update_display()
+
+    clock.start_game_tick()
+    move.can_store_piece = True
+    clock.timer_stop_id = None
+
+
+def check_top_out():
+    '''Checks if the stack is topping out (exiting the playfield at the top), ends the game if so.'''
     if collision.top_out(display.array):
         move.topped_out = True
 
+        # keys are unbinded to prevent player input during game over animation sequence
         display.root.unbind('<Key>')
 
-        if is_highscore:= points.score > points.get_highscore():
+        if points.score > points.get_highscore():
             points.new_highscore(points.score)
+            display.show_score(points.lines, points.score, points.get_highscore(), is_highscore=True)
 
-        display.show_score(points.lines, points.score, points.get_highscore(), is_highscore)
+        display.show_score(points.lines, points.score, points.get_highscore())    
         display.ending_animation()
 
         playsound('assets/top out.wav', block=False)
 
         reset_values()
 
+        # after the game over screen is displayed, rebind keys
         display.root.after(3200, enable_play_again)
-        return
 
-    if lines := points.search_completed_lines(display.array):
+        return True
+    
+    return False
+
+
+def enable_play_again():
+    '''Rebinds the keys to allow player to restart the game.'''
+    clock.game_is_paused = True
+    display.root.bind('<Key>', lambda event: actions(event.keysym))
+
+
+def check_lines():
+    '''Handles completed lines and scoring.'''
+    lines = points.search_completed_lines(display.array)
+
+    if lines:
         points.clear_and_collapse(display.array, lines)
 
         if len(lines) < 3:
@@ -165,14 +201,13 @@ def freeze():
         display.score_var.set(points.score)
         set_game_speed()
 
-    move.new_piece(display.array, choice.dequeue())
-
-    display.load_queue(choice.queue)
-    display.update_display()
-
-    clock.start_game_tick()
-    move.can_store_piece = True
-    clock.timer_stop_id = None
+    
+def set_game_speed():
+    '''Speeds up the game tick as the game progresses.'''
+    if clock.speed > 150:
+        clock.speed = 720 - (70*points.level)
+    elif clock.speed > 30:
+        clock.speed -= 10
 
 
 def start_game():
@@ -187,14 +222,6 @@ def start_game():
     clock.start_game_tick()
     clock.game_is_paused = False
 
-    
-def set_game_speed():
-    '''Speeds up the game tick as the game progresses.'''
-    if clock.speed > 150:
-        clock.speed = 720 - (70*points.level)
-    elif clock.speed > 30:
-        clock.speed -= 10
-
 
 def reset_values():
     move.clear(display.array)
@@ -203,15 +230,13 @@ def reset_values():
     clock.speed = 720
 
 
-def enable_play_again():
-    clock.game_is_paused = True
-    display.root.bind('<Key>', lambda event: actions(event.keysym))
-
 
 
 if __name__ == '__main__':
 
 
 
+    ...
 
-    display.root.mainloop()
+
+display.root.mainloop()
