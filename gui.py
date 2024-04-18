@@ -1,5 +1,6 @@
 import tkinter as tk
 import winsound
+from playsound import playsound
 
 
 class Display:
@@ -48,7 +49,7 @@ class Display:
              'J':'#6389d6', # blue
              'T':'#bb63d6'} # purple
 
-    
+
     # hex color value for ghost pieces
     ghost_color = {'Z':'#401c1c', # red
                    'L':'#332717', # orange
@@ -58,7 +59,7 @@ class Display:
                    'J':'#1c2940', # blue
                    'T':'#2c1733'} # purple
 
-    
+
     def print_grid(self):
         '''
         Prints the game grid. The hidden portion of the grid (where pieces spawn) is separated by a line.\n
@@ -72,7 +73,6 @@ class Display:
                 print()
             print(j)
         print()
-
 
     def update_display(self):
         '''Draws the game grid based on the values for each position in the array.'''
@@ -94,7 +94,6 @@ class Display:
         self.reset_piece_display()
         self.update_display()
                     
-
     def create_frames(self):
         self.main_window = tk.Frame(self.root,
                                     bg='#2d2a30')
@@ -147,7 +146,6 @@ class Display:
 
         self.info_frame = tk.Frame(self.ending_frame,
                                    bg='#1a1a1a')
-
 
     def create_labels(self):
         self.hold_label = tk.Label(self.left_side_frame,
@@ -269,7 +267,6 @@ class Display:
                                         bg='#1a1a1a',
                                         pady=(5))
 
-
     def load_images(self):
         # load shape png files
         self.img_Ishape = tk.PhotoImage(file='assets/Ishape.png')
@@ -304,7 +301,6 @@ class Display:
         
         self.queue3_image = tk.Label(self.queue_frame,
                                      bg='#1a1a1a')
-
 
     def pack_widgets(self):
         self.main_window.pack()
@@ -350,7 +346,6 @@ class Display:
 
         self.start_game_label.pack(pady=(280,0))
 
-
     def load_queue(self, queue: list[object]):
         '''Shows the pieces in queue on the GUI.'''
         self.next_image['image'] = self.image[queue[0].code]
@@ -358,11 +353,9 @@ class Display:
         self.queue2_image['image'] = self.image[queue[2].code]
         self.queue3_image['image'] = self.image[queue[3].code]
 
-
     def load_stored_piece(self, stored_piece: object):
         '''Shows the stored piece on the GUI.'''
         self.hold_image['image'] = self.image[stored_piece.code]
-
 
     def reset_piece_display(self):
         '''Removes the pieces from the hold and queue display.'''
@@ -371,7 +364,6 @@ class Display:
         self.queue2_image['image'] = ''
         self.queue3_image['image'] = ''
         self.hold_image['image'] = ''
-
 
     def get_stack(self) -> list[tuple[int, int]]:
         '''Returns a list with the position of every square of the stack.'''
@@ -383,7 +375,6 @@ class Display:
                     stack[x].append((x,y))
         return stack
 
-
     def ending_animation(self):
         '''Paints the stack with a wave effect then erases the grid.'''
         time = 0
@@ -394,13 +385,11 @@ class Display:
         self.root.after(time + 1200, self.reset_game)
         self.root.after(time + 1900, self.show_ending_info)
 
-
     def paint_white(self, line):
         '''Paints the squares white.'''
         for pos in line:
             x, y = pos[0], pos[1]
             self.square[x][y]['bg'] = '#848287'
-
 
     def show_ending_info(self):
         '''Displays the game over screen.'''
@@ -424,9 +413,10 @@ class Display:
         self.ending_highscore_value_label.pack()
 
         self.new_highscore_label.pack()
+        if self.new_highscore_label['text'] != '':
+            playsound('assets/highscore.wav', block=False)
 
         self.play_again_label.pack(pady=(70,0))
-
 
     def show_game_grid(self):
         '''Hides the game over screen.'''
@@ -435,13 +425,11 @@ class Display:
         self.grid_frame.pack(side=tk.LEFT, padx=(20,20), pady=(20,20))
         self.grid_frame.pack_propagate(0)
 
-
     def ghost_piece(self, positions: list[int], color_code: str):
         '''Paints the ghost piece with the corresponding color.'''
         for pos in positions:
             x, y = pos[0], pos[1]
             self.square[x][y]['bg'] = self.ghost_color[color_code]
-
 
     def show_score(self, lines: int, score: int, highscore: str, is_highscore: bool = False):
         '''Assign values to be shown in the game over screen.'''

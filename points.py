@@ -1,10 +1,7 @@
-
-
 class Points:
     lines = 0
     level = 0
     score = 0
-
 
     def search_completed_lines(self, array: list[list[int]]) -> list[int]:
         '''Returns a list with the indices of all completed horizontal lines'''
@@ -17,13 +14,11 @@ class Points:
 
         return completed_lines
 
-
     def clear_and_collapse(self, array: list[list[int]], completed_lines: list[int]):
         '''Clears the line and drops the line above.'''
         for i in completed_lines:
             array.pop(i)
             array.insert(0, [[0, ' '] for width in range(10)])
-
 
     def get_points(self, completed_lines: list[int]):
         '''Returns the amount of points earned for the completed lines.'''
@@ -46,12 +41,10 @@ class Points:
         else:
             return four_lines
 
-
     def clear(self):
         self.lines = 0
         self.level = 0
         self.score = 0
-
 
     def get_highscore(self) -> int:
         '''Returns the last saved highscore.'''
@@ -59,7 +52,6 @@ class Points:
         score = file.readline()
         file.close()
         return int(score)
-
 
     def new_highscore(self, score: int):
         '''Registers a new highscore.'''

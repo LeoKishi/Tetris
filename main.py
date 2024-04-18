@@ -42,7 +42,6 @@ class Clock:
             display.root.after_cancel(self.game_tick_stop_id)
             self.game_tick_stop_id = None
 
-
 # class instances
 clock = Clock()
 display = Display()
@@ -51,10 +50,8 @@ collision = Collision()
 choice = Choice()
 points = Points()
 
-
 # bind user input
 display.root.bind('<Key>', lambda event: actions(event.keysym))
-
 
 def actions(key: str):
     '''Executes action for corresponding key pressed.'''
@@ -120,7 +117,6 @@ def actions(key: str):
         display.show_game_grid()
         display.start_game_label.destroy()
 
-
 def freeze_timer():
     '''Starts the freeze timer if the piece is on the floor or on top of another piece'''
     if not collision.bottom_is_empty(display.array):
@@ -128,7 +124,6 @@ def freeze_timer():
             clock.start_timer()
     else:
         clock.stop_timer()
-
 
 def freeze():
     '''Freezes the current piece, checks for top out and completed lines then spawn the next piece.'''
@@ -149,7 +144,6 @@ def freeze():
     move.can_store_piece = True
     clock.timer_stop_id = None
 
-
 def check_top_out():
     '''Checks if the stack is topping out (exiting the playfield at the top), ends the game if so.'''
     if collision.top_out(display.array):
@@ -162,7 +156,9 @@ def check_top_out():
             points.new_highscore(points.score)
             display.show_score(points.lines, points.score, points.get_highscore(), is_highscore=True)
 
-        display.show_score(points.lines, points.score, points.get_highscore())    
+        else:
+            display.show_score(points.lines, points.score, points.get_highscore())  
+              
         display.ending_animation()
 
         playsound('assets/top out.wav', block=False)
@@ -176,12 +172,10 @@ def check_top_out():
     
     return False
 
-
 def enable_play_again():
     '''Rebinds the keys to allow player to restart the game.'''
     clock.game_is_paused = True
     display.root.bind('<Key>', lambda event: actions(event.keysym))
-
 
 def check_lines():
     '''Handles completed lines and scoring.'''
@@ -200,7 +194,6 @@ def check_lines():
         display.lines_var.set(points.lines)
         display.score_var.set(points.score)
         set_game_speed()
-
     
 def set_game_speed():
     '''Speeds up the game tick as the game progresses.'''
@@ -208,7 +201,6 @@ def set_game_speed():
         clock.speed = 720 - (70*points.level)
     elif clock.speed > 30:
         clock.speed -= 10
-
 
 def start_game():
     '''Loads the queue, spawns a new piece and starts the game tick clock.'''
@@ -222,13 +214,11 @@ def start_game():
     clock.start_game_tick()
     clock.game_is_paused = False
 
-
 def reset_values():
     move.clear(display.array)
     points.clear()
     choice.clear()
     clock.speed = 720
-
 
 
 
