@@ -401,7 +401,7 @@ class Display:
 
         self.grid_frame.pack_forget()
 
-        self.info_frame.pack(fill='x', pady=(150,0))
+        self.info_frame.pack(fill='x', pady=(100,0))
 
         self.ending_lines_header_label.pack()
         self.ending_lines_value_label.pack()
