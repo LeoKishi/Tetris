@@ -87,7 +87,6 @@ class Display:
                                              borderwidth=5,
                                              relief=tk.RAISED)
 
-
     def reset_game(self):
         '''Erases everything from the array and updates the display.'''
         self.array = [[[0, ' '] for width in range(10)] for height in range(22)]
@@ -358,7 +357,7 @@ class Display:
         self.hold_image['image'] = self.image[stored_piece.code]
 
     def reset_piece_display(self):
-        '''Removes the pieces from the hold and queue display.'''
+        '''Removes the pieces from the queue and hold display.'''
         self.next_image['image'] = ''
         self.queue1_image['image'] = ''
         self.queue2_image['image'] = ''
@@ -366,7 +365,7 @@ class Display:
         self.hold_image['image'] = ''
 
     def get_stack(self) -> list[tuple[int, int]]:
-        '''Returns a list with the position of every square of the stack.'''
+        '''Returns a list with the position of every square in the stack.'''
         stack = []
         for x in range(22):
             stack.append([])

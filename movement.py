@@ -138,7 +138,7 @@ class Move:
     def clear_old_position(self, array: list[list[int]]):
         '''
         Removes the current piece from the array.\n
-        Used to clear the old position before assigning a new one.
+        Use to clear the old position before assigning a new one.
         '''
         for x in range(22):
             for y in range(10):
@@ -172,8 +172,6 @@ class Move:
         Arguments
             array:
                 game grid array from the 'gui' module
-            position:
-                (x, y) where the piece is gonna be spawned
             shape:
                 any shape class from the 'piece' module
         '''

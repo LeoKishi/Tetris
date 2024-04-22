@@ -155,7 +155,7 @@ class Choice():
     def get_piece(self) -> object:
         '''
         Returns a random shape.\n
-        The shapes that are selected are removed from the choice pool. When all shapes are removed, the pool is reset.
+        The chosen shape is removed from the choice pool. When all shapes are removed, the pool is reset.
         '''
         if not self.pool:
             self.pool = [Tshape, Sshape, Zshape, Lshape, Jshape, Ishape, Oshape]
@@ -164,7 +164,7 @@ class Choice():
 
 
     def fill_queue(self):
-        '''Adds new random shapes to the queue if there are less than 4 shapes in the queue.'''
+        '''Adds new random shapes to the queue if the queue has less than 4 shapes.'''
         while len(self.queue) < 4:
             self.queue.append(self.get_piece())
 
